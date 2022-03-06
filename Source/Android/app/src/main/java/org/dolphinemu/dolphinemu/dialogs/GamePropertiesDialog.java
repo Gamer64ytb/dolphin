@@ -37,7 +37,6 @@ import java.io.File;
 
 public class GamePropertiesDialog extends DialogFragment
 {
-  public static final String TAG = "GamePropertiesDialog";
   private static final String ARG_PATH = "path";
   private static final String ARG_GAME_ID = "game_id";
   private static final String ARG_GAMETDB_ID = "gametdb_id";
