@@ -276,6 +276,10 @@ public final class SettingsFragmentPresenter
             R.string.analytics_new_id_confirmation, 0, NativeLibrary::GenerateNewStatisticsId));
     sl.add(new CheckBoxSetting(mContext, BooleanSetting.MAIN_ENABLE_SAVESTATES,
             R.string.enable_save_states, R.string.enable_save_states_description));
+    sl.add(new CheckBoxSetting(mContext, BooleanSetting.MAIN_PHONE_RUMBLE,
+            R.string.emulation_control_rumble, R.string.gc_adapter_rumble_description));
+    sl.add(new CheckBoxSetting(mContext, BooleanSetting.MAIN_JOYSTICK_REL_CENTER,
+            R.string.emulation_control_joystick_rel_center, 0));
   }
 
   private void addInterfaceSettings(ArrayList<SettingsItem> sl)

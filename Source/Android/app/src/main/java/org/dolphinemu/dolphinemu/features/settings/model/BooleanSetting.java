@@ -230,8 +230,9 @@ public enum BooleanSetting implements AbstractBooleanSetting
           MAIN_DSP_HLE,
           MAIN_CPU_THREAD,
           MAIN_ENABLE_CHEATS,
+          MAIN_PHONE_RUMBLE,
           MAIN_OVERRIDE_REGION_SETTINGS,
-          MAIN_WII_SD_CARD,  // Can actually be changed, but specific code is required
+          MAIN_WII_SD_CARD, // Can actually be changed, but specific code is required
           MAIN_DSP_JIT
   };
 
