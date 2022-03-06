@@ -163,7 +163,7 @@ public final class GameAdapter extends RecyclerView.Adapter<GameViewHolder> impl
     FragmentActivity activity = (FragmentActivity) view.getContext();
     GameViewHolder holder = (GameViewHolder) view.getTag();
     GamePropertiesDialog.newInstance(holder.gameFile).show(
-            activity.getSupportFragmentManager(), "GameDetailsDialog");
+            activity.getSupportFragmentManager(), "GamePropertiesDialog");
     return true;
   }
 }
