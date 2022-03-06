@@ -694,7 +694,8 @@ void Renderer::ScaleTexture(AbstractFramebuffer* dst_framebuffer,
   }
 
   SetViewportAndScissor(ConvertFramebufferRectangle(dst_rect, dst_framebuffer));
-  SetPipeline(g_shader_cache->GetRGBA8CopyPipeline());
+  SetPipeline(dst_framebuffer->GetLayers() > 1 ? g_shader_cache->GetRGBA8StereoCopyPipeline() :
+              g_shader_cache->GetRGBA8CopyPipeline());
   SetTexture(0, src_texture);
   SetSamplerState(0, RenderState::GetLinearSamplerState());
   Draw(0, 3);

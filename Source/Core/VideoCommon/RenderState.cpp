@@ -258,7 +258,7 @@ RasterizationState GetInvalidRasterizationState()
 RasterizationState GetNoCullRasterizationState(PrimitiveType primitive)
 {
   RasterizationState state = {};
-  state.cullmode = CullMode::Back;
+  state.cullmode = CullMode::None;
   state.primitive = primitive;
   return state;
 }
