@@ -109,7 +109,7 @@ public final class DirectoryInitialization
     if (externalPath == null)
       return false;
 
-    userPath = externalPath.getAbsolutePath() + "/dolphin-emu";
+    userPath = externalPath.getAbsolutePath() + "/dolphin-mmj";
     Log.debug("[DirectoryInitialization] User Dir: " + userPath);
     NativeLibrary.SetUserDirectory(userPath);
 
