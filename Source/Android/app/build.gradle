@@ -109,7 +109,7 @@ dependencies {
 }
 
 def getVersion() {
-    def versionNumber = '5.0-15538'
+    def versionNumber = '5.0-15539'
 
     try {
         versionNumber = 'git describe --always --long'.execute([], project.rootDir).text

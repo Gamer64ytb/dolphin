@@ -35,6 +35,7 @@
 #include "VideoCommon/VideoCommon.h"
 #include "VideoCommon/VideoConfig.h"
 #include "VideoCommon/XFMemory.h"
+#include "OnScreenDisplay.h"
 
 std::unique_ptr<VertexManagerBase> g_vertex_manager;
 
@@ -443,6 +444,19 @@ void VertexManagerBase::Flush()
     // Update the pipeline, or compile one if needed.
     UpdatePipelineConfig();
     UpdatePipelineObject();
+
+    // logic ops draw hack
+    if (m_current_pipeline_config.blending_state.logicopenable && g_ActiveConfig.bLogicOpsDrawHack)
+    {
+      LogicOp logicmode = m_current_pipeline_config.blending_state.logicmode;
+      if (!(logicmode == LogicOp::Clear || logicmode == LogicOp::Copy ||
+            logicmode == LogicOp::CopyInverted || logicmode == LogicOp::Set))
+      {
+        OnDraw();
+        return;
+      }
+    }
+
     if (m_current_pipeline_object)
     {
       g_renderer->SetPipeline(m_current_pipeline_object);
@@ -464,9 +478,8 @@ void VertexManagerBase::Flush()
 
   if (xfmem.numTexGen.numTexGens != bpmem.genMode.numtexgens)
   {
-    ERROR_LOG_FMT(VIDEO,
-                  "xf.numtexgens ({}) does not match bp.numtexgens ({}). Error in command stream.",
-                  xfmem.numTexGen.numTexGens, bpmem.genMode.numtexgens.Value());
+    OSD::AddMessage(fmt::format("xf.numtexgens({}) does not match bp.numtexgens({}).",
+                    xfmem.numTexGen.numTexGens, bpmem.genMode.numtexgens.Value()));
   }
 }
 

@@ -237,6 +237,8 @@ struct SConfig
 
   bool m_PauseOnFocusLost;
 
+  bool m_LogicOpsDrawHack;
+
   // Input settings
   bool m_BackgroundInput;
   bool m_AdapterRumble[4];

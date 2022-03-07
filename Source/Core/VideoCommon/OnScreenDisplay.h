@@ -35,6 +35,7 @@ enum class MessageType
   // emulation messages
   BoundingBoxNotice,
   EFBScale,
+  LogicOpsNotice,
 };
 
 namespace Color

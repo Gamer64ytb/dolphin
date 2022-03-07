@@ -663,16 +663,10 @@ static void Run(JNIEnv* env, const std::vector<std::string>& paths, bool riivolu
   {
     ButtonManager::Init(SConfig::GetInstance().GetGameID());
 
-    static constexpr int TIMEOUT = 10000;
-    int time_waited = 0;
     // A Core::CORE_ERROR state would be helpful here.
     while (!Core::IsRunningAndStarted())
     {
-      if (time_waited >= TIMEOUT || s_have_wm_user_stop)
-      {
-        successful_boot = false;
-        break;
-      }
+      // yup, just don't do anything, that's only needed to evit a bootloop.
     }
   }
 

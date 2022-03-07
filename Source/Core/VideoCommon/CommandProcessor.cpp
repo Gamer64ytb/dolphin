@@ -3,6 +3,7 @@
 
 #include <atomic>
 #include <cstring>
+#include <Common/StringUtil.h>
 
 #include "Common/Assert.h"
 #include "Common/ChunkFile.h"
@@ -16,6 +17,7 @@
 #include "Core/HW/ProcessorInterface.h"
 #include "VideoCommon/CommandProcessor.h"
 #include "VideoCommon/Fifo.h"
+#include "OnScreenDisplay.h"
 
 namespace CommandProcessor
 {
@@ -609,47 +611,8 @@ void SetCpClearRegister()
 void HandleUnknownOpcode(u8 cmd_byte, void* buffer, bool preprocess)
 {
   // TODO(Omega): Maybe dump FIFO to file on this error
-  PanicAlertFmtT("GFX FIFO: Unknown Opcode ({0:#04x} @ {1}, {2}).\n"
-                 "This means one of the following:\n"
-                 "* The emulated GPU got desynced, disabling dual core can help\n"
-                 "* Command stream corrupted by some spurious memory bug\n"
-                 "* This really is an unknown opcode (unlikely)\n"
-                 "* Some other sort of bug\n\n"
-                 "Further errors will be sent to the Video Backend log and\n"
-                 "Dolphin will now likely crash or hang. Enjoy.",
-                 cmd_byte, buffer, preprocess ? "preprocess=true" : "preprocess=false");
-
-  {
-    PanicAlertFmt("Illegal command {:02x}\n"
-                  "CPBase: {:#010x}\n"
-                  "CPEnd: {:#010x}\n"
-                  "CPHiWatermark: {:#010x}\n"
-                  "CPLoWatermark: {:#010x}\n"
-                  "CPReadWriteDistance: {:#010x}\n"
-                  "CPWritePointer: {:#010x}\n"
-                  "CPReadPointer: {:#010x}\n"
-                  "CPBreakpoint: {:#010x}\n"
-                  "bFF_GPReadEnable: {}\n"
-                  "bFF_BPEnable: {}\n"
-                  "bFF_BPInt: {}\n"
-                  "bFF_Breakpoint: {}\n"
-                  "bFF_GPLinkEnable: {}\n"
-                  "bFF_HiWatermarkInt: {}\n"
-                  "bFF_LoWatermarkInt: {}\n",
-                  cmd_byte, fifo.CPBase.load(std::memory_order_relaxed),
-                  fifo.CPEnd.load(std::memory_order_relaxed), fifo.CPHiWatermark,
-                  fifo.CPLoWatermark, fifo.CPReadWriteDistance.load(std::memory_order_relaxed),
-                  fifo.CPWritePointer.load(std::memory_order_relaxed),
-                  fifo.CPReadPointer.load(std::memory_order_relaxed),
-                  fifo.CPBreakpoint.load(std::memory_order_relaxed),
-                  fifo.bFF_GPReadEnable.load(std::memory_order_relaxed) ? "true" : "false",
-                  fifo.bFF_BPEnable.load(std::memory_order_relaxed) ? "true" : "false",
-                  fifo.bFF_BPInt.load(std::memory_order_relaxed) ? "true" : "false",
-                  fifo.bFF_Breakpoint.load(std::memory_order_relaxed) ? "true" : "false",
-                  fifo.bFF_GPLinkEnable.load(std::memory_order_relaxed) ? "true" : "false",
-                  fifo.bFF_HiWatermarkInt.load(std::memory_order_relaxed) ? "true" : "false",
-                  fifo.bFF_LoWatermarkInt.load(std::memory_order_relaxed) ? "true" : "false");
-  }
+  OSD::AddMessage(StringFromFormat("GFX FIFO: Unknown Opcode (0x%02x @ %p, preprocess=%s)",
+                  cmd_byte, buffer, preprocess ? "true" : "false"), 5000);
 }
 
 }  // namespace CommandProcessor

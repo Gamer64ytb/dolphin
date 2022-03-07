@@ -1201,7 +1201,7 @@ void Renderer::ApplyBlendingState(const BlendingState state)
       GL_COPY_INVERTED, GL_OR_INVERTED, GL_NAND,        GL_SET};
 
   // Logic ops aren't available in GLES3
-  if (!IsGLES())
+  if (g_Config.backend_info.bSupportsLogicOp)
   {
     if (state.logicopenable)
     {
@@ -1212,6 +1212,10 @@ void Renderer::ApplyBlendingState(const BlendingState state)
     {
       glDisable(GL_COLOR_LOGIC_OP);
     }
+  }
+  else if (state.logicopenable)
+  {
+    OSD::AddTypedMessage(OSD::MessageType::LogicOpsNotice, "Logic ops aren't available!", 4000);
   }
 
   glColorMask(state.colorupdate, state.colorupdate, state.colorupdate, state.alphaupdate);

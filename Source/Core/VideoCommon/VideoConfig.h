@@ -117,6 +117,8 @@ struct VideoConfig final
   bool bBBoxEnable = false;
   bool bForceProgressive = false;
 
+  bool bLogicOpsDrawHack = false; // logic ops hack
+
   bool bEFBEmulateFormatChanges = false;
   bool bSkipEFBCopyToRam = false;
   bool bSkipXFBCopyToRam = false;

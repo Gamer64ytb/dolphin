@@ -247,6 +247,7 @@ bool BootCore(std::unique_ptr<BootParameters> boot, const WindowSystemInfo& wsi)
     core_section->Get("JITFollowBranch", &StartUp.bJITFollowBranch, StartUp.bJITFollowBranch);
     core_section->Get("SyncOnSkipIdle", &StartUp.bSyncGPUOnSkipIdleHack,
                       StartUp.bSyncGPUOnSkipIdleHack);
+    core_section->Get("LogicOpsDrawHack", &StartUp.m_LogicOpsDrawHack, false);
     core_section->Get("FloatExceptions", &StartUp.bFloatExceptions, StartUp.bFloatExceptions);
     core_section->Get("DivByZeroExceptions", &StartUp.bDivideByZeroExceptions,
                       StartUp.bDivideByZeroExceptions);
