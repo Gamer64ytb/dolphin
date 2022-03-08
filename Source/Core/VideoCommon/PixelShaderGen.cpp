@@ -187,21 +187,6 @@ PixelShaderUid GetPixelShaderUid()
 
   u32 numStages = uid_data->genMode_numtevstages + 1;
 
-  const bool forced_early_z =
-      bpmem.UseEarlyDepthTest() &&
-      (g_ActiveConfig.bFastDepthCalc ||
-       bpmem.alpha_test.TestResult() == AlphaTestResult::Undetermined)
-      // We can't allow early_ztest for zfreeze because depth is overridden per-pixel.
-      // This means it's impossible for zcomploc to be emulated on a zfrozen polygon.
-      && !(bpmem.zmode.testenable && bpmem.genMode.zfreeze);
-  const bool per_pixel_depth =
-      (bpmem.ztex2.op != ZTexOp::Disabled && bpmem.UseLateDepthTest()) ||
-      (!g_ActiveConfig.bFastDepthCalc && bpmem.zmode.testenable && !forced_early_z) ||
-      (bpmem.zmode.testenable && bpmem.genMode.zfreeze);
-
-  uid_data->per_pixel_depth = per_pixel_depth;
-  uid_data->forced_early_z = forced_early_z;
-
   if (g_ActiveConfig.bEnablePixelLighting)
   {
     uid_data->numColorChans = xfmem.numChan.numColorChans;
@@ -284,7 +269,31 @@ PixelShaderUid GetPixelShaderUid()
                              MY_STRUCT_OFFSET(*uid_data, stagehash[numStages]);
 
   uid_data->Pretest = bpmem.alpha_test.TestResult();
-  uid_data->late_ztest = bpmem.UseLateDepthTest();
+
+  uid_data->zfreeze = bpmem.genMode.zfreeze;
+  uid_data->ztex_op = bpmem.ztex2.op;
+
+  if(bpmem.zmode.testenable)
+  {
+    uid_data->early_ztest = bpmem.zcontrol.early_ztest;
+    uid_data->late_ztest = !bpmem.zcontrol.early_ztest;
+
+    // We can't allow early_ztest for zfreeze because depth is overridden per-pixel.
+    // This means it's impossible for zcomploc to be emulated on a zfrozen polygon.
+    const bool forced_early_z = uid_data->early_ztest &&
+                                (g_ActiveConfig.bFastDepthCalc || bpmem.alpha_test.TestResult() == AlphaTestResult::Undetermined) &&
+                                !bpmem.genMode.zfreeze;
+    const bool per_pixel_depth = (bpmem.ztex2.op != ZTexOp::Disabled && uid_data->late_ztest) ||
+                                 (!g_ActiveConfig.bFastDepthCalc && !forced_early_z) ||
+                                 bpmem.genMode.zfreeze;
+
+    uid_data->per_pixel_depth = per_pixel_depth;
+    uid_data->forced_early_z = forced_early_z;
+  }
+  else
+  {
+    uid_data->forced_early_z = 1;
+  }
 
   // NOTE: Fragment may not be discarded if alpha test always fails and early depth test is enabled
   // (in this case we need to write a depth value if depth test passes regardless of the alpha
@@ -304,13 +313,9 @@ PixelShaderUid GetPixelShaderUid()
     // important that a reliable alpha test, so we just force the alpha test to always succeed.
     // At least this seems to be less buggy.
     uid_data->alpha_test_use_zcomploc_hack =
-        bpmem.UseEarlyDepthTest() && bpmem.zmode.updateenable &&
+      uid_data->early_ztest && bpmem.zmode.updateenable &&
         !g_ActiveConfig.backend_info.bSupportsEarlyZ && !bpmem.genMode.zfreeze;
   }
-
-  uid_data->zfreeze = bpmem.genMode.zfreeze;
-  uid_data->ztex_op = bpmem.ztex2.op;
-  uid_data->early_ztest = bpmem.UseEarlyDepthTest();
 
   uid_data->fog_fsel = bpmem.fog.c_proj_fsel.fsel;
   uid_data->fog_proj = bpmem.fog.c_proj_fsel.proj;
