@@ -20,7 +20,7 @@
                     <corners android:radius="6dp" />
                 </shape>
             </item>
-            <item android:drawable="@drawable/ic_baseline_open_in_new"
+            <item android:drawable="@drawable/ic_baseline_check"
                 android:gravity="center">
             </item>
         </layer-list>

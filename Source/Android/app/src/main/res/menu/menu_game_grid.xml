@@ -47,4 +47,9 @@
         android:title="@string/grid_menu_import_nand_backup"
         app:showAsAction="never"/>
 
+    <item
+        android:id="@+id/updater_dialog"
+        android:title="@string/grid_menu_open_updater"
+        app:showAsAction="never"/>
+
 </menu>

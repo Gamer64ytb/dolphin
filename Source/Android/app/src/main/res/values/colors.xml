@@ -15,4 +15,6 @@
 
     <color name="divider">#1f000000</color>
 
+    <color name="arrow">#42000000</color>
+
 </resources>

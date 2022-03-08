@@ -3,4 +3,6 @@
     <color name="dolphin_purple">#A277FF</color>
 
     <color name="divider">#66ffffff</color>
+
+    <color name="arrow">#dcdcdc</color>
 </resources>

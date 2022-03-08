@@ -76,9 +76,7 @@ public class QuickSettingsFragment extends Fragment implements SettingsFragmentV
     RecyclerView recyclerView = view.findViewById(R.id.list_quick_settings);
     recyclerView.setAdapter(mAdapter);
 
-    Resources.Theme theme = getResources().newTheme();
-    recyclerView.addItemDecoration(new DividerItemDecoration(ResourcesCompat
-            .getDrawable(getResources(), R.drawable.line_divider, theme)));
+    recyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), null));
 
     loadSettingsList();
     showSettingsList(mSettingsList);

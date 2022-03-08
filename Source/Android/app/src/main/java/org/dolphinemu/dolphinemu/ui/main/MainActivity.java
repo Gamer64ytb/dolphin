@@ -6,7 +6,6 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -23,8 +22,6 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.nononsenseapps.filepicker.DividerItemDecoration;
-
 import org.dolphinemu.dolphinemu.R;
 import org.dolphinemu.dolphinemu.activities.EmulationActivity;
 import org.dolphinemu.dolphinemu.adapters.GameAdapter;
@@ -34,6 +31,7 @@ import org.dolphinemu.dolphinemu.features.settings.ui.MenuTag;
 import org.dolphinemu.dolphinemu.features.settings.ui.SettingsActivity;
 import org.dolphinemu.dolphinemu.model.GameFileCache;
 import org.dolphinemu.dolphinemu.services.GameFileCacheManager;
+import org.dolphinemu.dolphinemu.ui.DividerItemDecoration;
 import org.dolphinemu.dolphinemu.utils.AfterDirectoryInitializationRunner;
 import org.dolphinemu.dolphinemu.utils.BooleanSupplier;
 import org.dolphinemu.dolphinemu.utils.CompletableFuture;
@@ -42,7 +40,7 @@ import org.dolphinemu.dolphinemu.utils.DirectoryInitialization;
 import org.dolphinemu.dolphinemu.utils.FileBrowserHelper;
 import org.dolphinemu.dolphinemu.utils.PermissionsHandler;
 import org.dolphinemu.dolphinemu.utils.StartupHandler;
-import org.dolphinemu.dolphinemu.BuildConfig;
+import org.dolphinemu.dolphinemu.utils.UpdaterUtils;
 import org.dolphinemu.dolphinemu.utils.WiiUtils;
 
 import java.util.Arrays;
@@ -81,9 +79,6 @@ public final class MainActivity extends AppCompatActivity
     setTitle(getString(R.string.app_name_version));
 
     setSupportActionBar(mToolbar);
-
-    String versionName = BuildConfig.VERSION_NAME;
-    setVersionString(versionName);
 
     GameFileCacheManager.getGameFiles().observe(this, (gameFiles) -> showGames());
 
@@ -133,6 +128,10 @@ public final class MainActivity extends AppCompatActivity
         case R.id.menu_import_nand_backup:
           new AfterDirectoryInitializationRunner().run(this, true,
                   () -> launchOpenFileActivity(REQUEST_NAND_BIN_FILE));
+          return true;
+
+        case R.id.updater_dialog:
+          openUpdaterDialog();
           return true;
       }
       return false;
@@ -218,8 +217,7 @@ public final class MainActivity extends AppCompatActivity
   {
     mToolbar = findViewById(R.id.toolbar_main);
     SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-    Drawable lineDivider = getDrawable(R.drawable.line_divider);
-    mDivider = new DividerItemDecoration(lineDivider);
+    mDivider = new DividerItemDecoration(this, null);
     mGameList = findViewById(R.id.grid_games);
     mAdapter = new GameAdapter();
     mGameList.setAdapter(mAdapter);
@@ -274,11 +272,6 @@ public final class MainActivity extends AppCompatActivity
     return true;
   }
 
-  public void setVersionString(String version)
-  {
-    mToolbar.setSubtitle(version);
-  }
-
   public void launchSettingsActivity(MenuTag menuTag)
   {
     SettingsActivity.launch(this, menuTag);
@@ -296,6 +289,11 @@ public final class MainActivity extends AppCompatActivity
     intent.addCategory(Intent.CATEGORY_OPENABLE);
     intent.setType("*/*");
     startActivityForResult(intent, requestCode);
+  }
+
+  public void openUpdaterDialog()
+  {
+    UpdaterUtils.openUpdaterWindow(this, null);
   }
 
   public void installWAD(String path)
