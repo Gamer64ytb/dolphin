@@ -15,8 +15,8 @@
                         android:type="linear"
                         android:startColor="@color/dolphin_blue"
                         android:centerX="40%"
-                        android:centerColor="@color/dolphin_blue_dark"
-                        android:endColor="@color/dolphin_purple" />
+                        android:centerColor="@color/dolphin_blue"
+                        android:endColor="@color/dolphin_blue" />
                     <corners android:radius="6dp" />
                 </shape>
             </item>
@@ -34,8 +34,8 @@
                         android:type="linear"
                         android:startColor="@color/dolphin_blue"
                         android:centerX="40%"
-                        android:centerColor="@color/dolphin_blue_dark"
-                        android:endColor="@color/dolphin_purple" />
+                        android:centerColor="@color/dolphin_blue"
+                        android:endColor="@color/dolphin_blue" />
                     <corners android:radius="6dp" />
                 </shape>
             </item>

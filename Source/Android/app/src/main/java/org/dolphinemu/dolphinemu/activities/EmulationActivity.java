@@ -395,7 +395,7 @@ public final class EmulationActivity extends AppCompatActivity
       mEmulationFragment.stopEmulation();
       finish();
     }
-    else
+    else if (BooleanSetting.MAIN_USE_NEW_EMULATION_UI.getBooleanGlobal()) // new emulation ui
     {
       mMenuVisible = true;
       mEmulationFragment.stopConfiguringControls();
@@ -406,6 +406,10 @@ public final class EmulationActivity extends AppCompatActivity
         mMenuVisible = false;
         enableFullscreenImmersive();
       });
+    }
+    else // old emulation ui (official)
+    {
+      toggleMenu();
     }
   }
 
@@ -674,8 +678,7 @@ public final class EmulationActivity extends AppCompatActivity
         break;
 
       case MENU_ACTION_QUICK_SETTINGS:
-        RunningSettingDialog.newInstance()
-                .show(getSupportFragmentManager(), "RunningSettingDialog");
+        showQuickSettings();
         break;
 
       case MENU_ACTION_EXIT:
