@@ -160,7 +160,7 @@ public class RunningSettingDialog extends DialogFragment
     @Override
     public void onClick(View clicked)
     {
-      EmulationActivity activity = (EmulationActivity) NativeLibrary.getEmulationActivity();
+      EmulationActivity activity = NativeLibrary.getEmulationActivity();
       switch (mItem.getSetting())
       {
         case SettingsItem.SETTING_LOAD_SUBMENU:
@@ -308,7 +308,6 @@ public class RunningSettingDialog extends DialogFragment
     @Override
     public void onClick(View clicked)
     {
-
     }
 
     @Override
@@ -387,13 +386,11 @@ public class RunningSettingDialog extends DialogFragment
         @Override
         public void onStartTrackingTouch(SeekBar seekBar)
         {
-
         }
 
         @Override
         public void onStopTrackingTouch(SeekBar seekBar)
         {
-
         }
       });
       mSeekBar.setProgress(item.getValue());
@@ -402,7 +399,6 @@ public class RunningSettingDialog extends DialogFragment
     @Override
     public void onClick(View clicked)
     {
-
     }
   }
 
@@ -538,6 +534,7 @@ public class RunningSettingDialog extends DialogFragment
 
     public void saveSettings()
     {
+      // don't constantly save settings
       if (mRunningSettings == null)
       {
         return;
@@ -609,7 +606,7 @@ public class RunningSettingDialog extends DialogFragment
     return builder.create();
   }
 
-  // show ram usage
+  // display ram usage
   public void setHeapInfo()
   {
     long heapsize = Debug.getNativeHeapAllocatedSize() >> 20;

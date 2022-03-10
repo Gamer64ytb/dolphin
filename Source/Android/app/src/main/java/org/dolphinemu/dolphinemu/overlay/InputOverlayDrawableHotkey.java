@@ -14,7 +14,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.view.MotionEvent;
 
 import org.dolphinemu.dolphinemu.NativeLibrary;
-import org.dolphinemu.dolphinemu.NativeLibrary.Hotkey;
 
 /**
  * Custom {@link BitmapDrawable} capable of storing

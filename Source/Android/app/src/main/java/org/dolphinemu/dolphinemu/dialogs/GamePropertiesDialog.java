@@ -27,7 +27,6 @@ import org.dolphinemu.dolphinemu.features.riivolution.ui.RiivolutionBootActivity
 import org.dolphinemu.dolphinemu.features.settings.ui.MenuTag;
 import org.dolphinemu.dolphinemu.features.settings.ui.SettingsActivity;
 import org.dolphinemu.dolphinemu.model.GameFile;
-import org.dolphinemu.dolphinemu.services.GameFileCacheManager;
 import org.dolphinemu.dolphinemu.ui.platform.Platform;
 import org.dolphinemu.dolphinemu.utils.DirectoryInitialization;
 import org.dolphinemu.dolphinemu.utils.GameBannerRequestHandler;

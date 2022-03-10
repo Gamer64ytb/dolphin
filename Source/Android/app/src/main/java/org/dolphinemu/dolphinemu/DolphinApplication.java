@@ -20,7 +20,7 @@ public class DolphinApplication extends Application
   {
     super.onCreate();
     application = this;
-    VolleyUtil.init(getApplicationContext());
+    VolleyUtil.init(getApplicationContext()); // updater
     System.loadLibrary("main");
 
     Java_GCAdapter.manager = (UsbManager) getSystemService(Context.USB_SERVICE);

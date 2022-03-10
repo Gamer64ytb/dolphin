@@ -241,7 +241,7 @@ public final class DirectoryInitialization
     return userPath;
   }
 
-  public static String getLocalSettingFile(String gameId)
+  public static String getGameSettings(String gameId)
   {
     return getUserDirectory() + File.separator + "GameSettings" + File.separator + gameId + ".ini";
   }

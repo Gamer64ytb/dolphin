@@ -68,9 +68,9 @@ public class IniEditorDialog extends DialogFragment
 
   private void setGameSettings(String gameId, EditText editCode)
   {
-    String filename = DirectoryInitialization.getLocalSettingFile(gameId);
+    String filename = DirectoryInitialization.getGameSettings(gameId);
     int count = 0;
-    String[] targets = {"[ActionReplay]", "[ActionReplay_Enabled]", "[Gecko]", "[Gecko_Enabled]"};
+    String[] targets = {"[ActionReplay]", "[ActionReplay_Enabled]", "[Gecko]", "[Gecko_Enabled]"}; // cheat sections
     int[] indices = {-1, -1, -1, -1};
 
     StringBuilder sb = new StringBuilder();
@@ -126,7 +126,7 @@ public class IniEditorDialog extends DialogFragment
 
   private void saveIniContent(String gameId, String content)
   {
-    String filename = DirectoryInitialization.getLocalSettingFile(gameId);
+    String filename = DirectoryInitialization.getGameSettings(gameId);
     boolean saved = false;
     try
     {

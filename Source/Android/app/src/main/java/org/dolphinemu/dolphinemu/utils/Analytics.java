@@ -11,7 +11,6 @@ import androidx.appcompat.app.AlertDialog;
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 
-import org.dolphinemu.dolphinemu.DolphinApplication;
 import org.dolphinemu.dolphinemu.R;
 import org.dolphinemu.dolphinemu.features.settings.model.BooleanSetting;
 import org.dolphinemu.dolphinemu.features.settings.model.Settings;
