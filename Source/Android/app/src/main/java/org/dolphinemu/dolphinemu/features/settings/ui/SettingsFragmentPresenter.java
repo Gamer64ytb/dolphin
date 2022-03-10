@@ -616,6 +616,8 @@ public final class SettingsFragmentPresenter
             R.string.video_backend, 0, R.array.videoBackendEntries, R.array.videoBackendValues));
     sl.add(new CheckBoxSetting(mContext, BooleanSetting.GFX_SHOW_FPS, R.string.show_fps,
             R.string.show_fps_description));
+    sl.add(new PercentSliderSetting(mContext, FloatSetting.GFX_FONT_SCALE, R.string.font_scale,
+            0, 0, 300, "%"));
     sl.add(new SingleChoiceSettingDynamicDescriptions(mContext,
             IntSetting.GFX_SHADER_COMPILATION_MODE, R.string.shader_compilation_mode, 0,
             R.array.shaderCompilationModeEntries, R.array.shaderCompilationModeValues,

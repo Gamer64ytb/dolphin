@@ -238,6 +238,8 @@
     <string name="video_backend_description">Select the API used for graphics rendering.</string>
     <string name="show_fps">Show FPS</string>
     <string name="show_fps_description">Show the number of frames rendered per second as a measure of emulation speed.</string>
+    <string name="font_scale">Font Scale</string>
+    <string name="font_scale_description">Customize the FPS counter size.</string>
 
     <string name="enhancements_submenu">Enhancements</string>
     <string name="internal_resolution">Internal Resolution</string>

@@ -77,6 +77,10 @@ bool IsSettingSaveable(const Config::Location& config_location)
       &Config::MAIN_OSD_MESSAGES.GetLocation(),
       &Config::MAIN_SKIP_NKIT_WARNING.GetLocation(),
 
+      // GFX.General
+
+      &Config::GFX_FONT_SCALE.GetLocation(),
+
       // UI.General
 
       &Config::MAIN_USE_DISCORD_PRESENCE.GetLocation(),

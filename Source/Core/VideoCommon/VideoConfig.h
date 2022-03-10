@@ -62,7 +62,7 @@ struct VideoConfig final
   bool bWidescreenHack = false;
   AspectMode aspect_mode{};
   AspectMode suggested_aspect_mode{};
-  float fDisplayScale = false;
+  float fDisplayScale = 0;
   bool bCrop = false;  // Aspect ratio controls.
   bool bShaderCache = false;
 
@@ -91,6 +91,7 @@ struct VideoConfig final
   // Render
   bool bWireFrame = false;
   bool bDisableFog = false;
+  float fFontScale = 0;
 
   // Utility
   bool bDumpTextures = false;
