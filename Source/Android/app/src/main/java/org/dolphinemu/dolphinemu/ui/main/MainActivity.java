@@ -11,12 +11,12 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,6 +29,9 @@ import org.dolphinemu.dolphinemu.features.settings.model.BooleanSetting;
 import org.dolphinemu.dolphinemu.features.settings.model.NativeConfig;
 import org.dolphinemu.dolphinemu.features.settings.ui.MenuTag;
 import org.dolphinemu.dolphinemu.features.settings.ui.SettingsActivity;
+import org.dolphinemu.dolphinemu.features.sysupdate.ui.OnlineUpdateProgressBarDialogFragment;
+import org.dolphinemu.dolphinemu.features.sysupdate.ui.SystemMenuNotInstalledDialogFragment;
+import org.dolphinemu.dolphinemu.features.sysupdate.ui.SystemUpdateViewModel;
 import org.dolphinemu.dolphinemu.model.GameFileCache;
 import org.dolphinemu.dolphinemu.services.GameFileCacheManager;
 import org.dolphinemu.dolphinemu.ui.DividerItemDecoration;
@@ -113,6 +116,14 @@ public final class MainActivity extends AppCompatActivity
 
         case R.id.menu_open_file:
           launchOpenFileActivity(REQUEST_GAME_FILE);
+          return true;
+
+        case R.id.menu_load_wii_system_menu:
+          launchWiiSystemMenu();
+          return true;
+
+        case R.id.menu_online_system_update:
+          launchOnlineUpdate();
           return true;
 
         case R.id.menu_install_wad:
@@ -269,6 +280,14 @@ public final class MainActivity extends AppCompatActivity
   {
     MenuInflater inflater = getMenuInflater();
     inflater.inflate(R.menu.menu_game_grid, menu);
+
+    if (WiiUtils.isSystemMenuInstalled())
+    {
+      menu.findItem(R.id.menu_load_wii_system_menu).setTitle(
+              getString(R.string.grid_menu_load_wii_system_menu_installed,
+                      WiiUtils.getSystemMenuVersion()));
+    }
+
     return true;
   }
 
@@ -415,6 +434,45 @@ public final class MainActivity extends AppCompatActivity
   public static void skipRescanningLibrary()
   {
     sShouldRescanLibrary = false;
+  }
+
+  private void launchOnlineUpdate()
+  {
+    if (WiiUtils.isSystemMenuInstalled())
+    {
+      SystemUpdateViewModel viewModel =
+              new ViewModelProvider(this).get(SystemUpdateViewModel.class);
+      viewModel.setRegion(-1);
+      OnlineUpdateProgressBarDialogFragment progressBarFragment =
+              new OnlineUpdateProgressBarDialogFragment();
+      progressBarFragment
+              .show(getSupportFragmentManager(), "OnlineUpdateProgressBarDialogFragment");
+      progressBarFragment.setCancelable(false);
+    }
+    else
+    {
+      SystemMenuNotInstalledDialogFragment dialogFragment =
+              new SystemMenuNotInstalledDialogFragment();
+      dialogFragment
+              .show(getSupportFragmentManager(), "SystemMenuNotInstalledDialogFragment");
+    }
+  }
+
+  private void launchWiiSystemMenu()
+  {
+    WiiUtils.isSystemMenuInstalled();
+
+    if (WiiUtils.isSystemMenuInstalled())
+    {
+      EmulationActivity.launchSystemMenu(this);
+    }
+    else
+    {
+      SystemMenuNotInstalledDialogFragment dialogFragment =
+              new SystemMenuNotInstalledDialogFragment();
+      dialogFragment
+              .show(getSupportFragmentManager(), "SystemMenuNotInstalledDialogFragment");
+    }
   }
 
   /**

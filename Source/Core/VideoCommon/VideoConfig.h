@@ -62,6 +62,7 @@ struct VideoConfig final
   bool bWidescreenHack = false;
   AspectMode aspect_mode{};
   AspectMode suggested_aspect_mode{};
+  float fDisplayScale = false;
   bool bCrop = false;  // Aspect ratio controls.
   bool bShaderCache = false;
 
@@ -117,6 +118,7 @@ struct VideoConfig final
   bool bBBoxEnable = false;
   bool bForceProgressive = false;
 
+  bool bAlphaPassShadowHack; // Vulkan-only and need alpha pass
   bool bLogicOpsDrawHack = false; // logic ops hack
 
   bool bEFBEmulateFormatChanges = false;

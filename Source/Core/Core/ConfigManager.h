@@ -235,6 +235,8 @@ struct SConfig
   bool m_DumpFramesSilent;
   bool m_ShowInputDisplay;
 
+  bool m_AlphaPassShadowHack;
+
   bool m_PauseOnFocusLost;
 
   bool m_LogicOpsDrawHack;

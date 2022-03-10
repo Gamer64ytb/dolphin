@@ -247,6 +247,7 @@ bool BootCore(std::unique_ptr<BootParameters> boot, const WindowSystemInfo& wsi)
     core_section->Get("JITFollowBranch", &StartUp.bJITFollowBranch, StartUp.bJITFollowBranch);
     core_section->Get("SyncOnSkipIdle", &StartUp.bSyncGPUOnSkipIdleHack,
                       StartUp.bSyncGPUOnSkipIdleHack);
+    core_section->Get("AlphaPassShadowHack", &StartUp.m_AlphaPassShadowHack, false);
     core_section->Get("LogicOpsDrawHack", &StartUp.m_LogicOpsDrawHack, false);
     core_section->Get("FloatExceptions", &StartUp.bFloatExceptions, StartUp.bFloatExceptions);
     core_section->Get("DivByZeroExceptions", &StartUp.bDivideByZeroExceptions,
@@ -451,7 +452,7 @@ bool BootCore(std::unique_ptr<BootParameters> boot, const WindowSystemInfo& wsi)
         std::make_unique<BootParameters>(
             BootParameters::IPL{StartUp.m_region,
                                 std::move(std::get<BootParameters::Disc>(boot->parameters))},
-            boot->savestate_path),
+            std::move(boot->boot_session_data)),
         wsi);
   }
   return Core::Init(std::move(boot), wsi);

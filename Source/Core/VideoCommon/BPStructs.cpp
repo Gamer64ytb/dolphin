@@ -162,6 +162,9 @@ static void BPWritten(const BPCmd& bp)
     PRIM_LOG("constalpha: alp={}, en={}", bpmem.dstalpha.alpha, bpmem.dstalpha.enable);
     if (bp.changes)
     {
+      if(g_ActiveConfig.bAlphaPassShadowHack && bpmem.dstalpha.alpha > 0)
+        bpmem.dstalpha.enable = false;
+
       PixelShaderManager::SetAlpha();
       PixelShaderManager::SetDestAlphaChanged();
     }

@@ -52,6 +52,7 @@ void VideoConfig::Refresh()
   bWidescreenHack = Config::Get(Config::GFX_WIDESCREEN_HACK);
   aspect_mode = Config::Get(Config::GFX_ASPECT_RATIO);
   suggested_aspect_mode = Config::Get(Config::GFX_SUGGESTED_ASPECT_RATIO);
+  fDisplayScale = Config::Get(Config::GFX_DISPLAY_SCALE);
   bCrop = Config::Get(Config::GFX_CROP);
   iSafeTextureCache_ColorSamples = Config::Get(Config::GFX_SAFE_TEXTURE_CACHE_COLOR_SAMPLES);
   bShowFPS = Config::Get(Config::GFX_SHOW_FPS);
@@ -138,6 +139,11 @@ void VideoConfig::Refresh()
   bFastTextureSampling = Config::Get(Config::GFX_HACK_FAST_TEXTURE_SAMPLING);
 
   bPerfQueriesEnable = Config::Get(Config::GFX_PERF_QUERIES_ENABLE);
+
+  if(backend_info.api_type == APIType::Vulkan && !backend_info.bSupportsDualSourceBlend)
+  {
+    bAlphaPassShadowHack = SConfig::GetInstance().m_AlphaPassShadowHack;
+  }
 
   if (!backend_info.bSupportsLogicOp && !backend_info.bSupportsFramebufferFetch)
   {
