@@ -726,6 +726,7 @@ double GetInputRadiusAtAngle(int pad_id, ButtonType stick, double angle)
   switch (stick)
   {
   case STICK_MAIN:
+  case STICK_EMULATION:
     group = Pad::GetGroup(pad_id, PadGroup::MainStick);
     break;
   case STICK_C:

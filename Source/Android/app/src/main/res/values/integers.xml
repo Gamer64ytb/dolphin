@@ -208,4 +208,14 @@
     <integer name="HOTKEY_PORTRAIT_Y">810</integer>
     <integer name="HOTKEY_H_PORTRAIT_X">846</integer>
     <integer name="HOTKEY_H_PORTRAIT_Y">810</integer>
+
+    <!-- Joystick Emulation layout -->
+    <integer name="STICK_EMULATION_X">80</integer>
+    <integer name="STICK_EMULATION_Y">340</integer>
+    <integer name="STICK_EMULATION_H_X">80</integer>
+    <integer name="STICK_EMULATION_H_Y">340</integer>
+    <integer name="STICK_EMULATION_PORTRAIT_X">160</integer>
+    <integer name="STICK_EMULATION_PORTRAIT_Y">470</integer>
+    <integer name="STICK_EMULATION_H_PORTRAIT_X">160</integer>
+    <integer name="STICK_EMULATION_H_PORTRAIT_Y">470</integer>
 </resources>

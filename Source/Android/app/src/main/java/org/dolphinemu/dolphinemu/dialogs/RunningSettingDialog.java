@@ -67,8 +67,9 @@ public class RunningSettingDialog extends DialogFragment
     // func: wii only
     public static final int SETTING_CHOOSE_CONTROLLER = 211;
     public static final int SETTING_MOTION_CONTROLS = 212;
-    public static final int SETTING_IR_SENSITIVITY = 213;
-    public static final int SETTING_CHOOSE_DOUBLE_TAP_BUTTON = 214;
+    public static final int SETTING_JOYSTICK_IR = 213;
+    public static final int SETTING_IR_SENSITIVITY = 214;
+    public static final int SETTING_CHOOSE_DOUBLE_TAP_BUTTON = 215;
 
     private int mSetting;
     private String mName;
@@ -216,6 +217,10 @@ public class RunningSettingDialog extends DialogFragment
           break;
         case SettingsItem.SETTING_MOTION_CONTROLS:
           activity.showMotionControlsOptions();
+          dismiss();
+          break;
+        case SettingsItem.SETTING_JOYSTICK_IR:
+          activity.setJoystickMode();
           dismiss();
           break;
         case SettingsItem.SETTING_IR_SENSITIVITY:
@@ -446,6 +451,8 @@ public class RunningSettingDialog extends DialogFragment
                 R.string.emulation_choose_controller, SettingsItem.TYPE_BUTTON, 0));
         mSettings.add(new SettingsItem(SettingsItem.SETTING_MOTION_CONTROLS,
                 R.string.emulation_motion_controls, SettingsItem.TYPE_BUTTON, 0));
+        mSettings.add(new SettingsItem(SettingsItem.SETTING_JOYSTICK_IR,
+                R.string.emulation_joystick_mode, SettingsItem.TYPE_BUTTON, 0));
         mSettings.add(new SettingsItem(SettingsItem.SETTING_IR_SENSITIVITY,
                 R.string.emulation_ir_sensitivity, SettingsItem.TYPE_BUTTON, 0));
         mSettings.add(new SettingsItem(SettingsItem.SETTING_CHOOSE_DOUBLE_TAP_BUTTON,

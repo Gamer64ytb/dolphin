@@ -103,7 +103,7 @@ public final class EmulationActivity extends AppCompatActivity
           MENU_ACTION_LOAD_SLOT6, MENU_ACTION_EXIT, MENU_ACTION_CHANGE_DISC,
           MENU_ACTION_RESET_OVERLAY, MENU_SET_IR_SENSITIVITY, MENU_ACTION_CHOOSE_DOUBLETAP,
           MENU_ACTION_MOTION_CONTROLS, MENU_ACTION_PAUSE_EMULATION, MENU_ACTION_UNPAUSE_EMULATION,
-          MENU_ACTION_OVERLAY_CONTROLS, MENU_ACTION_QUICK_SETTINGS, MENU_ACTION_HOTKEY})
+          MENU_ACTION_OVERLAY_CONTROLS, MENU_ACTION_QUICK_SETTINGS, MENU_ACTION_HOTKEY, MENU_ACTION_SET_JOYSTICK_MODE})
   public @interface MenuAction
   {
   }
@@ -143,6 +143,7 @@ public final class EmulationActivity extends AppCompatActivity
   public static final int MENU_ACTION_OVERLAY_CONTROLS = 32;
   public static final int MENU_ACTION_QUICK_SETTINGS = 33;
   public static final int MENU_ACTION_HOTKEY = 35;
+  public static final int MENU_ACTION_SET_JOYSTICK_MODE = 36;
 
   private static final SparseIntArray buttonsActionsMap = new SparseIntArray();
 
@@ -169,6 +170,8 @@ public final class EmulationActivity extends AppCompatActivity
             EmulationActivity.MENU_ACTION_MOTION_CONTROLS);
     buttonsActionsMap.append(R.id.menu_emulation_hotkey,
             EmulationActivity.MENU_ACTION_HOTKEY);
+    buttonsActionsMap.append(R.id.menu_emulation_set_joystick_mode,
+            EmulationActivity.MENU_ACTION_SET_JOYSTICK_MODE);
   }
 
   public static void launch(FragmentActivity activity, String filePath, boolean riivolution)
@@ -693,6 +696,10 @@ public final class EmulationActivity extends AppCompatActivity
         changeDisc();
         break;
 
+      case MENU_ACTION_SET_JOYSTICK_MODE:
+        setJoystickMode();
+        break;
+
       case MENU_SET_IR_SENSITIVITY:
         setIRSensitivity();
         break;
@@ -996,6 +1003,20 @@ public final class EmulationActivity extends AppCompatActivity
               NativeLibrary.ReloadWiimoteConfig();
             });
     builder.setPositiveButton(R.string.ok, (dialogInterface, i) -> dialogInterface.dismiss());
+
+    builder.show();
+  }
+
+  public void setJoystickMode()
+  {
+    AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DolphinDialogBase);
+    builder.setTitle(R.string.emulation_joystick_mode);
+    builder.setSingleChoiceItems(R.array.joystickEmulationModeEntries,
+            IntSetting.MAIN_JOYSTICK_IR_MODE.getInt(mSettings),
+            (dialog, indexSelected) ->
+                    IntSetting.MAIN_JOYSTICK_IR_MODE.setInt(mSettings, indexSelected));
+    builder.setPositiveButton(R.string.ok, (dialogInterface, i) ->
+            mEmulationFragment.refreshInputOverlay());
 
     builder.show();
   }

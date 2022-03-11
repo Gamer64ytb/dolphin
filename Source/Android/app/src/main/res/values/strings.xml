@@ -451,6 +451,7 @@
     <string name="properties_edit_cheats">Edit Cheats</string>
     <string name="properties_clear_game_data">Clear Game Cache</string>
     <string name="properties_clear_game_settings">Clear Game Settings and Cheats</string>
+    <string name="properties_clear_game_settings_button">Clear Game Settings</string>
     <string name="properties_clear_game_settings_confirmation">Are you sure you want to delete all game-specific settings and cheats for this game?</string>
     <string name="properties_clear_success">Cleared settings for %1$s</string>
     <string name="properties_clear_failure">Unable to clear settings for %1$s</string>
@@ -578,6 +579,7 @@ It can efficiently compress both junk data and encrypted Wii data.
     <string name="emulation_choose_controller">Choose Controller</string>
     <string name="emulation_menu_help">Press Back to access the menu.\nLong press Back to exit emulation.</string>
     <string name="emulation_touch_overlay_reset">Reset Overlay</string>
+    <string name="emulation_joystick_mode">Joystick Emulation</string>
     <string name="emulation_ir_group">Touch IR Pointer</string>
     <string name="emulation_ir_sensitivity">IR Sensitivity</string>
     <string name="emulation_choose_doubletap">Double tap button</string>

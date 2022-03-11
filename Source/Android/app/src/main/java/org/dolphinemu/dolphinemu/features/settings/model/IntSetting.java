@@ -35,6 +35,8 @@ public enum IntSetting implements AbstractIntSetting
           "DoubleTapButton",
           InputOverlayPointer.DOUBLE_TAP_OPTIONS.get(InputOverlayPointer.DOUBLE_TAP_A)),
 
+  MAIN_JOYSTICK_IR_MODE(Settings.FILE_DOLPHIN, Settings.SECTION_INI_ANDROID_OVERLAY_BUTTONS,
+          "JoystickIRMode", 0),
   MAIN_HOTKEY_MODE(Settings.FILE_DOLPHIN, Settings.SECTION_INI_ANDROID_OVERLAY_BUTTONS,
           "HotkeyMode", 0),
 

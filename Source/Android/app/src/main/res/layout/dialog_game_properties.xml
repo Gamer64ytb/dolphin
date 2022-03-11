@@ -102,7 +102,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/button_gradient"
                 android:stateListAnimator="@null"
-                android:text="@string/properties_clear_game_settings"
+                android:text="@string/properties_clear_game_settings_button"
                 android:textColor="#ffffff"
                 android:textAllCaps="false" />
 
