@@ -457,6 +457,10 @@ public final class SettingsFragmentPresenter
             R.string.wiimote_scanning, R.string.wiimote_scanning_description));
     sl.add(new CheckBoxSetting(mContext, BooleanSetting.MAIN_WIIMOTE_ENABLE_SPEAKER,
             R.string.wiimote_speaker, R.string.wiimote_speaker_description));
+    sl.add(new HeaderSetting(mContext, R.string.wiimote_ir, 0));
+    sl.add(new CheckBoxSetting(mContext, BooleanSetting.MAIN_IR_ALWAYS_RECENTER,
+            R.string.emulation_ir_recenter,
+            R.string.emulation_ir_recenter_description));
   }
 
   private void addAdvancedSettings(ArrayList<SettingsItem> sl)
@@ -627,7 +631,8 @@ public final class SettingsFragmentPresenter
             R.string.wait_for_shaders, R.string.wait_for_shaders_description));
     sl.add(new SingleChoiceSetting(mContext, IntSetting.GFX_ASPECT_RATIO, R.string.aspect_ratio, 0,
             R.array.aspectRatioEntries, R.array.aspectRatioValues));
-    sl.add(new PercentSliderSetting(mContext, FloatSetting.GFX_DISPLAY_SCALE, R.string.setting_display_scale,
+    sl.add(new PercentSliderSetting(mContext, FloatSetting.GFX_DISPLAY_SCALE,
+            R.string.setting_display_scale,
             0, 0, 200, "%"));
 
     sl.add(new HeaderSetting(mContext, R.string.graphics_more_settings, 0));
