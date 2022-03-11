@@ -766,7 +766,7 @@ TextureCacheBase::DoPartialTextureUpdates(TCacheEntry* entry_to_update, const u8
     return entry_to_update;
   entry_to_update->may_have_overlapping_textures = false;
 
-  const bool isPaletteTexture = IsColorIndexed(entry_to_update->format.texfmt) && g_ActiveConfig.bPaletteTextureCopy;
+  const bool isPaletteTexture = IsColorIndexed(entry_to_update->format.texfmt);
 
   // EFB copies are excluded from these updates, until there's an example where a game would
   // benefit from updating. This would require more work to be done.
@@ -1368,7 +1368,7 @@ TextureCacheBase::GetTexture(const int textureCacheSafetyColorSampleSize, Textur
       // EFB copies have slightly different rules as EFB copy formats have different
       // meanings from texture formats.
       if ((base_hash == entry->hash &&
-           (!texture_info.GetPaletteSize() || g_Config.backend_info.bSupportsPaletteConversion)) ||
+           (!texture_info.GetPaletteSize() || g_Config.UsePaletteTextureCopy())) ||
           IsPlayingBackFifologWithBrokenEFBCopies)
       {
         // The texture format in VRAM must match the format that the copy was created with. Some
@@ -1403,7 +1403,7 @@ TextureCacheBase::GetTexture(const int textureCacheSafetyColorSampleSize, Textur
 
         // TODO: We should check width/height/levels for EFB copies. I'm not sure what effect
         // checking width/height/levels would have.
-        if (!texture_info.GetPaletteSize() || !g_Config.backend_info.bSupportsPaletteConversion)
+        if (!texture_info.GetPaletteSize() || !g_Config.UsePaletteTextureCopy())
           return entry;
 
         // Note that we found an unconverted EFB copy, then continue.  We'll

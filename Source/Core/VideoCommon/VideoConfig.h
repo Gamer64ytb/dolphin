@@ -250,6 +250,10 @@ struct VideoConfig final
   {
     return backend_info.bSupportsGPUTextureDecoding && bEnableGPUTextureDecoding;
   }
+  bool UsePaletteTextureCopy() const
+  {
+    return backend_info.bSupportsPaletteConversion && bPaletteTextureCopy;
+  }
   bool UseVertexRounding() const { return bVertexRounding && iEFBScale != 1; }
   bool ManualTextureSamplingWithHiResTextures() const
   {
