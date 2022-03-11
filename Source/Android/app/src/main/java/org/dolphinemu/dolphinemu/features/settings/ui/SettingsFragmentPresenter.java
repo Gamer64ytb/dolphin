@@ -715,6 +715,8 @@ public final class SettingsFragmentPresenter
     sl.add(new SingleChoiceSetting(mContext, IntSetting.GFX_SAFE_TEXTURE_CACHE_COLOR_SAMPLES,
             R.string.texture_cache_accuracy, R.string.texture_cache_accuracy_description,
             R.array.textureCacheAccuracyEntries, R.array.textureCacheAccuracyValues));
+    sl.add(new CheckBoxSetting(mContext, BooleanSetting.GFX_PALETTE_TEXTURE_COPY,
+            R.string.palette_texture_copy, R.string.palette_texture_copy_description));
     sl.add(new CheckBoxSetting(mContext, BooleanSetting.GFX_ENABLE_GPU_TEXTURE_DECODING,
             R.string.gpu_texture_decoding, R.string.gpu_texture_decoding_description));
 

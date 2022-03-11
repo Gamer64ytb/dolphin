@@ -766,7 +766,7 @@ TextureCacheBase::DoPartialTextureUpdates(TCacheEntry* entry_to_update, const u8
     return entry_to_update;
   entry_to_update->may_have_overlapping_textures = false;
 
-  const bool isPaletteTexture = IsColorIndexed(entry_to_update->format.texfmt);
+  const bool isPaletteTexture = IsColorIndexed(entry_to_update->format.texfmt) && g_ActiveConfig.bPaletteTextureCopy;
 
   // EFB copies are excluded from these updates, until there's an example where a game would
   // benefit from updating. This would require more work to be done.

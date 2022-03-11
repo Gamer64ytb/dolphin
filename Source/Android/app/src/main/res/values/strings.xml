@@ -292,6 +292,8 @@
     <string name="texture_cache">Texture Cache</string>
     <string name="texture_cache_accuracy">Texture Cache Accuracy</string>
     <string name="texture_cache_accuracy_description">The safer the selection, the less likely the emulator will be missing any texture updates from RAM.</string>
+    <string name="palette_texture_copy">Palette Texture Copy</string>
+    <string name="palette_texture_copy_description">Copy palette textures to GPU, may improve (or decrease) the performance on some games.</string>
     <string name="gpu_texture_decoding">GPU Texture Decoding</string>
     <string name="gpu_texture_decoding_description">Decodes textures on the GPU using compute shaders where supported. May improve performance in some scenarios.</string>
     <string name="external_frame_buffer">External Frame Buffer</string>

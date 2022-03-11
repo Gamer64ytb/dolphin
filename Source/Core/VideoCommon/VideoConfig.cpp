@@ -77,6 +77,7 @@ void VideoConfig::Refresh()
   sDumpPath = Config::Get(Config::GFX_DUMP_PATH);
   iBitrateKbps = Config::Get(Config::GFX_BITRATE_KBPS);
   bInternalResolutionFrameDumps = Config::Get(Config::GFX_INTERNAL_RESOLUTION_FRAME_DUMPS);
+  bPaletteTextureCopy = Config::Get(Config::GFX_PALETTE_TEXTURE_COPY);
   bEnableGPUTextureDecoding = Config::Get(Config::GFX_ENABLE_GPU_TEXTURE_DECODING);
   bEnablePixelLighting = Config::Get(Config::GFX_ENABLE_PIXEL_LIGHTING);
   bFastDepthCalc = Config::Get(Config::GFX_FAST_DEPTH_CALC);

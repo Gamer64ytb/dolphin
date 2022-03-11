@@ -164,6 +164,8 @@ public enum BooleanSetting implements AbstractBooleanSetting
   GFX_DUMP_XFB_TARGET(Settings.FILE_GFX, Settings.SECTION_GFX_SETTINGS, "DumpXFBTarget", false),
   GFX_INTERNAL_RESOLUTION_FRAME_DUMPS(Settings.FILE_GFX, Settings.SECTION_GFX_SETTINGS,
           "InternalResolutionFrameDumps", false),
+  GFX_PALETTE_TEXTURE_COPY(Settings.FILE_GFX, Settings.SECTION_GFX_SETTINGS,
+          "PaletteTextureCopy", true),
   GFX_ENABLE_GPU_TEXTURE_DECODING(Settings.FILE_GFX, Settings.SECTION_GFX_SETTINGS,
           "EnableGPUTextureDecoding", false),
   GFX_ENABLE_PIXEL_LIGHTING(Settings.FILE_GFX, Settings.SECTION_GFX_SETTINGS,
