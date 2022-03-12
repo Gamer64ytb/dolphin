@@ -1359,7 +1359,7 @@ TextureCacheBase::GetTexture(const int textureCacheSafetyColorSampleSize, Textur
     // game freezes the image and fades it out to black on screen transitions, which fades
     // out a purple screen in XFB2Tex. Check for this here and convert them if necessary.
 
-    // Do not load strided EFB copies, they are not meant to be used directly.
+    // Do not load stride EFB copies, they are not meant to be used directly.
     // Also do not directly load EFB copies, which were partly overwritten.
     if (entry->IsEfbCopy() && entry->native_width == texture_info.GetRawWidth() &&
         entry->native_height == texture_info.GetRawHeight() &&
@@ -1374,8 +1374,8 @@ TextureCacheBase::GetTexture(const int textureCacheSafetyColorSampleSize, Textur
         // The texture format in VRAM must match the format that the copy was created with. Some
         // formats are inherently compatible, as the channel and bit layout is identical (e.g.
         // I8/C8). Others have the same number of bits per texel, and can be reinterpreted on the
-        // GPU (e.g. IA4 and I8 or RGB565 and RGBA5). The only known game which reinteprets texels
-        // in this manner is Spiderman Shattered Dimensions, where it creates a copy in B8 format,
+        // GPU (e.g. IA4 and I8 or RGB565 and RGBA5). The only known game which reinterprets texels
+        // in this manner is Spider-Man Shattered Dimensions, where it creates a copy in B8 format,
         // and sets it up as a IA4 texture.
         if (!IsCompatibleTextureFormat(entry->format.texfmt, texture_info.GetTextureFormat()))
         {
@@ -1564,6 +1564,7 @@ TextureCacheBase::GetTexture(const int textureCacheSafetyColorSampleSize, Textur
 
   if (!hires_tex)
   {
+    // don't decode texture on gpu if disabled
     if (!decode_on_gpu ||
         !DecodeTextureOnGPU(entry, 0, texture_info.GetData(), texture_info.GetTextureSize(),
                             texture_info.GetTextureFormat(), width, height, expanded_width,
@@ -1652,6 +1653,7 @@ TextureCacheBase::GetTexture(const int textureCacheSafetyColorSampleSize, Textur
       if (!mip_level)
         continue;
 
+      // don't decode texture on gpu if disabled
       if (!decode_on_gpu ||
           !DecodeTextureOnGPU(
               entry, level, mip_level->GetData(), mip_level->GetTextureSize(),
