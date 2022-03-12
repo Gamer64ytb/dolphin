@@ -16,8 +16,6 @@
 #include "Core/ConfigManager.h"
 #include "Core/CoreTiming.h"
 #include "Core/DolphinAnalytics.h"
-#include "Core/FifoPlayer/FifoPlayer.h"
-#include "Core/FifoPlayer/FifoRecorder.h"
 #include "Core/HW/Memmap.h"
 #include "Core/HW/VideoInterface.h"
 
@@ -322,13 +320,6 @@ static void BPWritten(const BPCmd& bp)
         // below div two to convert from bytes to pixels - it expects width, not stride
         g_renderer->Swap(destAddr, destStride / 2, destStride, height, CoreTiming::GetTicks());
       }
-      else
-      {
-        if (FifoPlayer::GetInstance().IsRunningWithFakeVideoInterfaceUpdates())
-        {
-          VideoInterface::FakeVIUpdate(destAddr, srcRect.GetWidth(), destStride, height);
-        }
-      }
     }
 
     // Clear the rectangular region after copying it.
@@ -352,9 +343,6 @@ static void BPWritten(const BPCmd& bp)
       addr = addr & 0x01FFFFFF;
 
     Memory::CopyFromEmu(texMem + tlutTMemAddr, addr, tlutXferCount);
-
-    if (OpcodeDecoder::g_record_fifo_data)
-      FifoRecorder::GetInstance().UseMemory(addr, tlutXferCount, MemoryUpdate::TMEM);
 
     TMEM::InvalidateAll();
 
@@ -566,9 +554,6 @@ static void BPWritten(const BPCmd& bp)
           bytes_read += TMEM_LINE_SIZE * 2;
         }
       }
-
-      if (OpcodeDecoder::g_record_fifo_data)
-        FifoRecorder::GetInstance().UseMemory(src_addr, bytes_read, MemoryUpdate::TMEM);
 
       TMEM::InvalidateAll();
     }

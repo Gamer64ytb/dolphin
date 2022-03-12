@@ -38,7 +38,6 @@ namespace fs = std::filesystem;
 #include "Core/Config/MainSettings.h"
 #include "Core/Config/SYSCONFSettings.h"
 #include "Core/ConfigManager.h"
-#include "Core/FifoPlayer/FifoPlayer.h"
 #include "Core/HLE/HLE.h"
 #include "Core/HW/DVD/DVDInterface.h"
 #include "Core/HW/EXI/EXI_DeviceIPL.h"
@@ -596,7 +595,7 @@ bool CBoot::BootUp(std::unique_ptr<BootParameters> boot)
     bool operator()(const BootParameters::DFF& dff) const
     {
       NOTICE_LOG_FMT(BOOT, "Booting DFF: {}", dff.dff_path);
-      return FifoPlayer::GetInstance().Open(dff.dff_path);
+      return true;
     }
 
   private:

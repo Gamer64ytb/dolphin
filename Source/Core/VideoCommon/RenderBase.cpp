@@ -43,7 +43,6 @@
 #include "Core/ConfigManager.h"
 #include "Core/Core.h"
 #include "Core/DolphinAnalytics.h"
-#include "Core/FifoPlayer/FifoRecorder.h"
 #include "Core/FreeLookConfig.h"
 #include "Core/HW/SystemTimers.h"
 #include "Core/HW/VideoInterface.h"
@@ -892,7 +891,6 @@ std::tuple<int, int> Renderer::CalculateOutputDimensions(int width, int height) 
 void Renderer::CheckFifoRecording()
 {
   const bool was_recording = OpcodeDecoder::g_record_fifo_data;
-  OpcodeDecoder::g_record_fifo_data = FifoRecorder::GetInstance().IsRecording();
 
   if (!OpcodeDecoder::g_record_fifo_data)
     return;
@@ -901,26 +899,12 @@ void Renderer::CheckFifoRecording()
   {
     RecordVideoMemory();
   }
-
-  FifoRecorder::GetInstance().EndFrame(
-      CommandProcessor::fifo.CPBase.load(std::memory_order_relaxed),
-      CommandProcessor::fifo.CPEnd.load(std::memory_order_relaxed));
 }
 
 void Renderer::RecordVideoMemory()
 {
-  const u32* bpmem_ptr = reinterpret_cast<const u32*>(&bpmem);
   u32 cpmem[256] = {};
-  // The FIFO recording format splits XF memory into xfmem and xfregs; follow
-  // that split here.
-  const u32* xfmem_ptr = reinterpret_cast<const u32*>(&xfmem);
-  const u32* xfregs_ptr = reinterpret_cast<const u32*>(&xfmem) + FifoDataFile::XF_MEM_SIZE;
-  u32 xfregs_size = sizeof(XFMemory) / 4 - FifoDataFile::XF_MEM_SIZE;
-
   FillCPMemoryArray(cpmem);
-
-  FifoRecorder::GetInstance().SetVideoMemory(bpmem_ptr, cpmem, xfmem_ptr, xfregs_ptr, xfregs_size,
-                                             texMem);
 }
 
 void Renderer::ForceReloadTextures()

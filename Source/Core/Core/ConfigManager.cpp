@@ -38,7 +38,6 @@
 #include "Core/ConfigLoaders/GameConfigLoader.h"
 #include "Core/Core.h"
 #include "Core/DolphinAnalytics.h"
-#include "Core/FifoPlayer/FifoDataFile.h"
 #include "Core/HLE/HLE.h"
 #include "Core/HW/DVD/DVDInterface.h"
 #include "Core/HW/EXI/EXI_Device.h"
@@ -747,12 +746,7 @@ struct SetGameMetadata
 
   bool operator()(const BootParameters::DFF& dff) const
   {
-    std::unique_ptr<FifoDataFile> dff_file(FifoDataFile::Load(dff.dff_path, true));
-    if (!dff_file)
-      return false;
-
     *region = DiscIO::Region::NTSC_U;
-    config->bWii = dff_file->GetIsWii();
     Host_TitleChanged();
 
     return true;

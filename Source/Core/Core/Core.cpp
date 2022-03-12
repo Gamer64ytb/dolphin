@@ -44,7 +44,6 @@
 #include "Core/CoreTiming.h"
 #include "Core/DSPEmulator.h"
 #include "Core/DolphinAnalytics.h"
-#include "Core/FifoPlayer/FifoPlayer.h"
 #include "Core/FreeLookManager.h"
 #include "Core/HLE/HLE.h"
 #include "Core/HW/CPU.h"
@@ -418,25 +417,13 @@ static void FifoPlayerThread(const std::optional<std::string>& savestate_path,
     Common::SetCurrentThreadName("FIFO-GPU thread");
 
   // Enter CPU run loop. When we leave it - we are done.
-  if (auto cpu_core = FifoPlayer::GetInstance().GetCPUCore())
-  {
-    PowerPC::InjectExternalCPUCore(cpu_core.get());
-    s_is_started = true;
+  s_is_started = true;
 
-    CPUSetInitialExecutionState();
-    CPU::Run();
+  CPUSetInitialExecutionState();
+  CPU::Run();
 
-    s_is_started = false;
-    PowerPC::InjectExternalCPUCore(nullptr);
-    FifoPlayer::GetInstance().Close();
-  }
-  else
-  {
-    // FIFO log does not contain any frames, cannot continue.
-    PanicAlertFmt("FIFO file is invalid, cannot playback.");
-    FifoPlayer::GetInstance().Close();
-    return;
-  }
+  s_is_started = false;
+  PowerPC::InjectExternalCPUCore(nullptr);
 }
 
 // Initialize and create emulation thread

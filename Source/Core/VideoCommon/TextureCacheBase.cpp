@@ -28,8 +28,6 @@
 
 #include "Core/Config/GraphicsSettings.h"
 #include "Core/ConfigManager.h"
-#include "Core/FifoPlayer/FifoPlayer.h"
-#include "Core/FifoPlayer/FifoRecorder.h"
 #include "Core/HW/Memmap.h"
 
 #include "VideoCommon/AbstractFramebuffer.h"
@@ -1272,14 +1270,6 @@ TextureCacheBase::GetTexture(const int textureCacheSafetyColorSampleSize, Textur
     return nullptr;
   }
 
-  // If we are recording a FifoLog, keep track of what memory we read. FifoRecorder does
-  // its own memory modification tracking independent of the texture hashing below.
-  if (OpcodeDecoder::g_record_fifo_data && !texture_info.IsFromTmem())
-  {
-    FifoRecorder::GetInstance().UseMemory(
-        texture_info.GetRawAddress(), texture_info.GetFullLevelSize(), MemoryUpdate::TEXTURE_MAP);
-  }
-
   // TODO: This doesn't hash GB tiles for preloaded RGBA8 textures (instead, it's hashing more data
   // from the low tmem bank than it should)
   base_hash = Common::GetHash64(texture_info.GetData(), texture_info.GetTextureSize(),
@@ -1368,8 +1358,7 @@ TextureCacheBase::GetTexture(const int textureCacheSafetyColorSampleSize, Textur
       // EFB copies have slightly different rules as EFB copy formats have different
       // meanings from texture formats.
       if ((base_hash == entry->hash &&
-           (!texture_info.GetPaletteSize() || g_Config.UsePaletteTextureCopy())) ||
-          IsPlayingBackFifologWithBrokenEFBCopies)
+           (!texture_info.GetPaletteSize() || g_Config.UsePaletteTextureCopy())))
       {
         // The texture format in VRAM must match the format that the copy was created with. Some
         // formats are inherently compatible, as the channel and bit layout is identical (e.g.
@@ -2314,8 +2303,6 @@ void TextureCacheBase::CopyRenderTargetToTexture(
     u32 address = dstAddr;
     for (u32 i = 0; i < num_blocks_y; i++)
     {
-      FifoRecorder::GetInstance().UseMemory(address, bytes_per_row, MemoryUpdate::TEXTURE_MAP,
-                                            true);
       address += dstStride;
     }
   }

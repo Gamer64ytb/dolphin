@@ -16,7 +16,6 @@
 
 #include "Common/CommonTypes.h"
 #include "Common/Logging/Log.h"
-#include "Core/FifoPlayer/FifoRecorder.h"
 #include "Core/HW/Memmap.h"
 #include "VideoCommon/BPMemory.h"
 #include "VideoCommon/CPMemory.h"
@@ -270,7 +269,6 @@ u8* Run(DataReader src, u32* cycles, bool in_display_list)
       if (g_record_fifo_data && cmd_byte != GX_CMD_CALL_DL)
       {
         const u8* const opcode_end = src.GetPointer();
-        FifoRecorder::GetInstance().WriteGPCommand(opcode_start, u32(opcode_end - opcode_start));
       }
     }
   }
