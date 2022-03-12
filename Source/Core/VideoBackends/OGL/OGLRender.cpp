@@ -1155,9 +1155,9 @@ void Renderer::ApplyBlendingState(const BlendingState state)
   if (m_current_blend_state == state)
     return;
 
-  bool useDualSource =
-      state.usedualsrc && g_ActiveConfig.backend_info.bSupportsDualSourceBlend &&
-      (!DriverDetails::HasBug(DriverDetails::BUG_BROKEN_DUAL_SOURCE_BLENDING) || state.dstalpha);
+  bool useDualSource = state.IsDualSourceBlend() &&
+    g_ActiveConfig.backend_info.bSupportsDualSourceBlend &&
+    (!DriverDetails::HasBug(DriverDetails::BUG_BROKEN_DUAL_SOURCE_BLENDING));
 
   const GLenum src_factors[8] = {GL_ZERO,
                                  GL_ONE,

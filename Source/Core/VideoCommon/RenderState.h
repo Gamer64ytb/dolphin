@@ -105,6 +105,11 @@ union BlendingState
 {
   void Generate(const BPMemory& bp);
 
+  bool IsDualSourceBlend() const
+  {
+    return dstalpha && (srcfactor == SrcBlendFactor::SrcAlpha || dstfactor == DstBlendFactor::InvSrcAlpha);
+  }
+
   // HACK: Replaces logical operations with blend operations.
   // Will not be bit-correct, and in some cases not even remotely in the same ballpark.
   void ApproximateLogicOpWithBlending();
@@ -134,7 +139,6 @@ union BlendingState
   BitField<4, 1, u32> alphaupdate;
   BitField<5, 1, u32> subtract;
   BitField<6, 1, u32> subtractAlpha;
-  BitField<7, 1, u32> usedualsrc;
   BitField<8, 3, DstBlendFactor> dstfactor;
   BitField<11, 3, SrcBlendFactor> srcfactor;
   BitField<14, 3, DstBlendFactor> dstfactoralpha;

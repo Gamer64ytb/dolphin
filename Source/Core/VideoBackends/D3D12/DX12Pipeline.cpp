@@ -132,7 +132,7 @@ static void GetD3DBlendDesc(D3D12_BLEND_DESC* desc, const BlendingState& state)
   {
     rtblend->BlendOp = state.subtract ? D3D12_BLEND_OP_REV_SUBTRACT : D3D12_BLEND_OP_ADD;
     rtblend->BlendOpAlpha = state.subtractAlpha ? D3D12_BLEND_OP_REV_SUBTRACT : D3D12_BLEND_OP_ADD;
-    if (state.usedualsrc)
+    if (state.IsDualSourceBlend())
     {
       rtblend->SrcBlend = src_dual_src_factors[u32(state.srcfactor.Value())];
       rtblend->SrcBlendAlpha = src_dual_src_factors[u32(state.srcfactoralpha.Value())];

@@ -132,9 +132,9 @@ static VkPipelineColorBlendAttachmentState GetVulkanAttachmentBlendState(const B
   vk_state.colorBlendOp = state.subtract ? VK_BLEND_OP_REVERSE_SUBTRACT : VK_BLEND_OP_ADD;
   vk_state.alphaBlendOp = state.subtractAlpha ? VK_BLEND_OP_REVERSE_SUBTRACT : VK_BLEND_OP_ADD;
 
-  bool use_dual_source =
-      state.usedualsrc && g_ActiveConfig.backend_info.bSupportsDualSourceBlend &&
-      (!DriverDetails::HasBug(DriverDetails::BUG_BROKEN_DUAL_SOURCE_BLENDING) || state.dstalpha);
+  bool use_dual_source = state.IsDualSourceBlend() &&
+    g_ActiveConfig.backend_info.bSupportsDualSourceBlend &&
+    (!DriverDetails::HasBug(DriverDetails::BUG_BROKEN_DUAL_SOURCE_BLENDING));
 
   if (use_dual_source)
   {
