@@ -254,7 +254,8 @@ public final class SettingsFragmentPresenter
     sl.add(new SubmenuSetting(mContext, R.string.wii_submenu, MenuTag.CONFIG_WII));
     sl.add(new SubmenuSetting(mContext, R.string.advanced_submenu, MenuTag.CONFIG_ADVANCED));
     sl.add(new SubmenuSetting(mContext, R.string.log_submenu, MenuTag.CONFIG_LOG));
-    sl.add(new SubmenuSetting(mContext, R.string.debug_submenu, MenuTag.DEBUG));
+    // TODO (Gamer64): unused section, hide for now.
+    // sl.add(new SubmenuSetting(mContext, R.string.debug_submenu, MenuTag.DEBUG));
     sl.add(new RunRunnable(mContext, R.string.user_data_submenu, 0, 0, 0,
             () -> UserDataActivity.launch(mContext)));
   }
@@ -273,10 +274,11 @@ public final class SettingsFragmentPresenter
             R.string.speed_limit, 0, 0, 200, "%"));
     sl.add(new SingleChoiceSetting(mContext, IntSetting.MAIN_FALLBACK_REGION,
             R.string.fallback_region, 0, R.array.regionEntries, R.array.regionValues));
-    sl.add(new CheckBoxSetting(mContext, BooleanSetting.MAIN_ANALYTICS_ENABLED, R.string.analytics,
+    // TODO (Gamer64): don't use this for now, this is a fork!
+    /* sl.add(new CheckBoxSetting(mContext, BooleanSetting.MAIN_ANALYTICS_ENABLED, R.string.analytics,
             0));
     sl.add(new RunRunnable(mContext, R.string.analytics_new_id, 0,
-            R.string.analytics_new_id_confirmation, 0, NativeLibrary::GenerateNewStatisticsId));
+            R.string.analytics_new_id_confirmation, 0, NativeLibrary::GenerateNewStatisticsId));*/
     sl.add(new CheckBoxSetting(mContext, BooleanSetting.MAIN_ENABLE_SAVESTATES,
             R.string.enable_save_states, R.string.enable_save_states_description));
     sl.add(new CheckBoxSetting(mContext, BooleanSetting.MAIN_PHONE_RUMBLE,
