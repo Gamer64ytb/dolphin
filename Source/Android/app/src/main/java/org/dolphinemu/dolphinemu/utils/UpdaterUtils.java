@@ -24,8 +24,8 @@ import org.dolphinemu.dolphinemu.features.settings.model.Settings;
 public class UpdaterUtils
 {
   public static final String URL =
-          "https://api.github.com/repos/Gamer64ytb/dolphin/releases";
-  public static final String LATEST = "/latest";
+          "https://api.github.com/repos/Gamer64ytb/dolphin/releases"; // for old release check.
+  public static final String LATEST = "/latest"; // for latest release check.
 
   public static void openUpdaterWindow(Context context, UpdaterData data)
   {
@@ -34,6 +34,7 @@ public class UpdaterUtils
     updaterDialog.show(fm, "fragment_updater");
   }
 
+  // search updates if the user have it enabled.
   public static void checkUpdatesInit(Context context)
   {
     new AfterDirectoryInitializationRunner().run(context, false, () ->
@@ -71,10 +72,12 @@ public class UpdaterUtils
       @Override
       public void onLoadError()
       {
+        // ignore
       }
     });
   }
 
+  // new update dialog
   private static void showUpdateMessage(Context context, UpdaterData data)
   {
     new AlertDialog.Builder(context)
@@ -89,6 +92,7 @@ public class UpdaterUtils
             .show();
   }
 
+  // ask to the user on first boot if he wants check updates on startup.
   private static void showPermissionDialog(Context context)
   {
     new AlertDialog.Builder(context)
@@ -129,17 +133,20 @@ public class UpdaterUtils
     }
   }
 
+  // get the update info
   public static void makeDataRequest(LoadCallback<UpdaterData> listener)
   {
     JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, URL + LATEST, null,
             response ->
             {
-              try
+              try // first, try access to github
+                  // and get the updates, network is needed.
               {
                 UpdaterData data = new UpdaterData(response);
                 listener.onLoad(data);
               }
-              catch (Exception e)
+              catch (Exception e) // if fails (because build not detected
+                                  // or no network connection) show a error.
               {
                 Log.e(UpdaterUtils.class.getSimpleName(), e.toString());
                 listener.onLoadError();
@@ -149,12 +156,14 @@ public class UpdaterUtils
     VolleyUtil.getQueue().add(jsonRequest);
   }
 
+  // get the changelog info
   public static void makeChangelogRequest(String format, LoadCallback<String> listener)
   {
     JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, URL, null,
             response ->
             {
-              try
+              try // first, try access to github
+                  // and get the text, network is needed.
               {
                 StringBuilder changelog = new StringBuilder();
 
@@ -168,16 +177,18 @@ public class UpdaterUtils
                 changelog.setLength(Math.max(changelog.length() - 1, 0));
                 listener.onLoad(changelog.toString());
               }
-              catch (Exception e)
+              catch (Exception e) // if fails (because page not founded
+                                  // or no network connection) show a error.
               {
                 Log.e(UpdaterUtils.class.getSimpleName(), e.toString());
                 listener.onLoadError();
               }
             },
             error -> listener.onLoadError());
-    VolleyUtil.getQueue().add(jsonRequest);
+    VolleyUtil.getQueue().add(jsonRequest); // request finished successfully
   }
 
+  // clean downloaded apk of updater
   public static void cleanDownloadFolder(Context context)
   {
     File[] files = getDownloadFolder(context).listFiles();
