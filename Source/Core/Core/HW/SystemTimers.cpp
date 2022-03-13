@@ -47,6 +47,7 @@ IPC_HLE_PERIOD: For the Wii Remote this is the call schedule:
 #include <cfloat>
 #include <cmath>
 #include <cstdlib>
+#include <Core/Config/MainSettings.h>
 
 #include "Common/CommonTypes.h"
 #include "Common/Logging/Log.h"
@@ -183,7 +184,7 @@ void ThrottleCallback(u64 last_time, s64 cyclesLate)
         (s_emu_to_real_time_index + 1) % s_emu_to_real_time_ring_buffer.size();
   }
 
-  if (frame_limiter)
+  if (frame_limiter && !Config::Get(Config::MAIN_FAST_FORWARD_HOTKEY))
   {
     if (config.m_EmulationSpeed != 1.0f)
       next_event = u32(next_event * config.m_EmulationSpeed);
