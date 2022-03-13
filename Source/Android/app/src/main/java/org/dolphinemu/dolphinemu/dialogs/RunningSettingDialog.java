@@ -71,6 +71,23 @@ public class RunningSettingDialog extends DialogFragment
     public static final int SETTING_IR_MODE = 214;
     public static final int SETTING_IR_SENSITIVITY = 215;
     public static final int SETTING_CHOOSE_DOUBLE_TAP_BUTTON = 216;
+    // statesave
+    public static final int SETTING_STATE_SAVE = 300;
+    public static final int SETTING_STATE_LOAD = 301;
+    // save
+    public static final int SETTING_STATE_SAVE_SLOT1 = 302;
+    public static final int SETTING_STATE_SAVE_SLOT2 = 303;
+    public static final int SETTING_STATE_SAVE_SLOT3 = 304;
+    public static final int SETTING_STATE_SAVE_SLOT4 = 305;
+    public static final int SETTING_STATE_SAVE_SLOT5 = 306;
+    public static final int SETTING_STATE_SAVE_SLOT6 = 307;
+    // load
+    public static final int SETTING_STATE_LOAD_SLOT1 = 308;
+    public static final int SETTING_STATE_LOAD_SLOT2 = 309;
+    public static final int SETTING_STATE_LOAD_SLOT3 = 310;
+    public static final int SETTING_STATE_LOAD_SLOT4 = 311;
+    public static final int SETTING_STATE_LOAD_SLOT5 = 312;
+    public static final int SETTING_STATE_LOAD_SLOT6 = 313;
 
     private int mSetting;
     private String mName;
@@ -210,6 +227,56 @@ public class RunningSettingDialog extends DialogFragment
         case SettingsItem.SETTING_EXIT_GAME:
           NativeLibrary.StopEmulation();
           activity.finish();
+          break;
+        // save state
+        case SettingsItem.SETTING_STATE_SAVE_SLOT1:
+          NativeLibrary.SaveState(1, false);
+          dismiss();
+          break;
+        case SettingsItem.SETTING_STATE_SAVE_SLOT2:
+          NativeLibrary.SaveState(2, false);
+          dismiss();
+          break;
+        case SettingsItem.SETTING_STATE_SAVE_SLOT3:
+          NativeLibrary.SaveState(3, false);
+          dismiss();
+          break;
+        case SettingsItem.SETTING_STATE_SAVE_SLOT4:
+          NativeLibrary.SaveState(4, false);
+          dismiss();
+          break;
+        case SettingsItem.SETTING_STATE_SAVE_SLOT5:
+          NativeLibrary.SaveState(5, false);
+          dismiss();
+          break;
+        case SettingsItem.SETTING_STATE_SAVE_SLOT6:
+          NativeLibrary.SaveState(6, false);
+          dismiss();
+          break;
+        // load state
+        case SettingsItem.SETTING_STATE_LOAD_SLOT1:
+          NativeLibrary.LoadState(1);
+          dismiss();
+          break;
+        case SettingsItem.SETTING_STATE_LOAD_SLOT2:
+          NativeLibrary.LoadState(2);
+          dismiss();
+          break;
+        case SettingsItem.SETTING_STATE_LOAD_SLOT3:
+          NativeLibrary.LoadState(3);
+          dismiss();
+          break;
+        case SettingsItem.SETTING_STATE_LOAD_SLOT4:
+          NativeLibrary.LoadState(4);
+          dismiss();
+          break;
+        case SettingsItem.SETTING_STATE_LOAD_SLOT5:
+          NativeLibrary.LoadState(5);
+          dismiss();
+          break;
+        case SettingsItem.SETTING_STATE_LOAD_SLOT6:
+          NativeLibrary.LoadState(6);
+          dismiss();
           break;
         // wii
         case SettingsItem.SETTING_CHOOSE_CONTROLLER:
@@ -431,11 +498,51 @@ public class RunningSettingDialog extends DialogFragment
               SettingsItem.TYPE_BUTTON, 0));
       mSettings.add(new SettingsItem(SettingsItem.SETTING_QUICK_LOAD, R.string.emulation_quickload,
               SettingsItem.TYPE_BUTTON, 0));
+      mSettings.add(new SettingsItem(SettingsItem.SETTING_LOAD_SUBMENU,
+              R.string.emulation_savestate, SettingsItem.TYPE_BUTTON, MENU_SAVE_STATE));
+      mSettings.add(new SettingsItem(SettingsItem.SETTING_LOAD_SUBMENU,
+              R.string.emulation_loadstate, SettingsItem.TYPE_BUTTON, MENU_LOAD_STATE));
       mSettings.add(new SettingsItem(SettingsItem.SETTING_CHANGE_DISC,
               R.string.emulation_change_disc,
               SettingsItem.TYPE_BUTTON, 0));
       mSettings.add(new SettingsItem(SettingsItem.SETTING_EXIT_GAME, R.string.emulation_exit,
               SettingsItem.TYPE_BUTTON, 0));
+      notifyDataSetChanged();
+    }
+
+    public void loadStateSaveMenu()
+    {
+      mSettings = new ArrayList<>();
+      mSettings.add(new SettingsItem(SettingsItem.SETTING_STATE_SAVE_SLOT1,
+              R.string.emulation_slot1, SettingsItem.TYPE_BUTTON, 0));
+      mSettings.add(new SettingsItem(SettingsItem.SETTING_STATE_SAVE_SLOT2,
+              R.string.emulation_slot2, SettingsItem.TYPE_BUTTON, 0));
+      mSettings.add(new SettingsItem(SettingsItem.SETTING_STATE_SAVE_SLOT3,
+              R.string.emulation_slot3, SettingsItem.TYPE_BUTTON, 0));
+      mSettings.add(new SettingsItem(SettingsItem.SETTING_STATE_SAVE_SLOT4,
+              R.string.emulation_slot4, SettingsItem.TYPE_BUTTON, 0));
+      mSettings.add(new SettingsItem(SettingsItem.SETTING_STATE_SAVE_SLOT5,
+              R.string.emulation_slot5, SettingsItem.TYPE_BUTTON, 0));
+      mSettings.add(new SettingsItem(SettingsItem.SETTING_STATE_SAVE_SLOT6,
+              R.string.emulation_slot6, SettingsItem.TYPE_BUTTON, 0));
+      notifyDataSetChanged();
+    }
+
+    public void loadStateLoadMenu()
+    {
+      mSettings = new ArrayList<>();
+      mSettings.add(new SettingsItem(SettingsItem.SETTING_STATE_LOAD_SLOT1,
+              R.string.emulation_slot1, SettingsItem.TYPE_BUTTON, 0));
+      mSettings.add(new SettingsItem(SettingsItem.SETTING_STATE_LOAD_SLOT2,
+              R.string.emulation_slot2, SettingsItem.TYPE_BUTTON, 0));
+      mSettings.add(new SettingsItem(SettingsItem.SETTING_STATE_LOAD_SLOT3,
+              R.string.emulation_slot3, SettingsItem.TYPE_BUTTON, 0));
+      mSettings.add(new SettingsItem(SettingsItem.SETTING_STATE_LOAD_SLOT4,
+              R.string.emulation_slot4, SettingsItem.TYPE_BUTTON, 0));
+      mSettings.add(new SettingsItem(SettingsItem.SETTING_STATE_LOAD_SLOT5,
+              R.string.emulation_slot5, SettingsItem.TYPE_BUTTON, 0));
+      mSettings.add(new SettingsItem(SettingsItem.SETTING_STATE_LOAD_SLOT6,
+              R.string.emulation_slot6, SettingsItem.TYPE_BUTTON, 0));
       notifyDataSetChanged();
     }
 
@@ -581,6 +688,8 @@ public class RunningSettingDialog extends DialogFragment
   public static final int MENU_MAIN = 0;
   public static final int MENU_OVERLAY = 1;
   public static final int MENU_SETTINGS = 2;
+  public static final int MENU_SAVE_STATE = 3;
+  public static final int MENU_LOAD_STATE = 4;
 
   private int mMenu;
   private TextView mTitle;
@@ -659,6 +768,16 @@ public class RunningSettingDialog extends DialogFragment
     {
       mTitle.setText(R.string.emulation_overlay_controls);
       mAdapter.loadOverlayMenu();
+    }
+    else if (menu == MENU_SAVE_STATE)
+    {
+      mTitle.setText(R.string.emulation_savestate);
+      mAdapter.loadStateSaveMenu();
+    }
+    else if (menu == MENU_LOAD_STATE)
+    {
+      mTitle.setText(R.string.emulation_loadstate);
+      mAdapter.loadStateLoadMenu();
     }
     else if (menu == MENU_SETTINGS)
     {
