@@ -278,7 +278,7 @@ public final class SettingsFragmentPresenter
     /* sl.add(new CheckBoxSetting(mContext, BooleanSetting.MAIN_ANALYTICS_ENABLED, R.string.analytics,
             0));
     sl.add(new RunRunnable(mContext, R.string.analytics_new_id, 0,
-            R.string.analytics_new_id_confirmation, 0, NativeLibrary::GenerateNewStatisticsId));*/
+            R.string.analytics_new_id_confirmation, 0, NativeLibrary::GenerateNewStatisticsId)); */
     sl.add(new CheckBoxSetting(mContext, BooleanSetting.MAIN_ENABLE_SAVESTATES,
             R.string.enable_save_states, R.string.enable_save_states_description));
     sl.add(new CheckBoxSetting(mContext, BooleanSetting.MAIN_PHONE_RUMBLE,
@@ -772,8 +772,9 @@ public final class SettingsFragmentPresenter
     sl.add(new HeaderSetting(mContext, R.string.debugging, 0));
     sl.add(new CheckBoxSetting(mContext, BooleanSetting.GFX_ENABLE_WIREFRAME,
             R.string.wireframe, R.string.leave_this_unchecked));
-    sl.add(new CheckBoxSetting(mContext, BooleanSetting.GFX_OVERLAY_STATS,
-            R.string.show_stats, R.string.leave_this_unchecked));
+    // TODO (Gamer64): not available for now.
+    /* sl.add(new CheckBoxSetting(mContext, BooleanSetting.GFX_OVERLAY_STATS,
+            R.string.show_stats, R.string.leave_this_unchecked)); */
     sl.add(new CheckBoxSetting(mContext, BooleanSetting.GFX_TEXFMT_OVERLAY_ENABLE,
             R.string.texture_format, R.string.leave_this_unchecked));
     sl.add(new CheckBoxSetting(mContext, BooleanSetting.GFX_ENABLE_VALIDATION_LAYER,
