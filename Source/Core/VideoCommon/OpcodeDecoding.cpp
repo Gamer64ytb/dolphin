@@ -272,15 +272,6 @@ u8* Run(DataReader src, u32* cycles, bool in_display_list)
       }
       break;
     }
-
-    // Display lists get added directly into the FIFO stream
-    if constexpr (!is_preprocess)
-    {
-      if (g_record_fifo_data && cmd_byte != GX_CMD_CALL_DL)
-      {
-        const u8* const opcode_end = src.GetPointer();
-      }
-    }
   }
 }
 

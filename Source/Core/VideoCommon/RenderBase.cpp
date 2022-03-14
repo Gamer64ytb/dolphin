@@ -334,8 +334,6 @@ void Renderer::PokeEFB(EFBAccessType type, const EfbPokeData* points, size_t num
 void Renderer::RenderToXFB(u32 xfbAddr, const MathUtil::Rectangle<int>& sourceRc, u32 fbStride,
                            u32 fbHeight, float Gamma)
 {
-  CheckFifoRecording();
-
   if (!fbStride || !fbHeight)
     return;
 }
@@ -886,25 +884,6 @@ std::tuple<int, int> Renderer::CalculateOutputDimensions(int width, int height) 
   height -= height % 4;
 
   return std::make_tuple(width, height);
-}
-
-void Renderer::CheckFifoRecording()
-{
-  const bool was_recording = OpcodeDecoder::g_record_fifo_data;
-
-  if (!OpcodeDecoder::g_record_fifo_data)
-    return;
-
-  if (!was_recording)
-  {
-    RecordVideoMemory();
-  }
-}
-
-void Renderer::RecordVideoMemory()
-{
-  u32 cpmem[256] = {};
-  FillCPMemoryArray(cpmem);
 }
 
 void Renderer::ForceReloadTextures()

@@ -2297,16 +2297,6 @@ void TextureCacheBase::CopyRenderTargetToTexture(
     ++iter.first;
   }
 
-  if (OpcodeDecoder::g_record_fifo_data)
-  {
-    // Mark the memory behind this efb copy as dynamicly generated for the Fifo log
-    u32 address = dstAddr;
-    for (u32 i = 0; i < num_blocks_y; i++)
-    {
-      address += dstStride;
-    }
-  }
-
   // Even if the copy is deferred, still compute the hash. This way if the copy is used as a texture
   // in a subsequent draw before it is flushed, it will have the same hash.
   if (entry)

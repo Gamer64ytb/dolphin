@@ -275,9 +275,6 @@ protected:
 
   void CheckForConfigChanges();
 
-  void CheckFifoRecording();
-  void RecordVideoMemory();
-
   virtual std::unique_ptr<BoundingBox> CreateBoundingBox() const = 0;
 
   AbstractFramebuffer* m_current_framebuffer = nullptr;

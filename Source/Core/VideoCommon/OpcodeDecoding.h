@@ -10,9 +10,6 @@ class DataReader;
 
 namespace OpcodeDecoder
 {
-// Global flag to signal if FifoRecorder is active.
-extern bool g_record_fifo_data;
-
 enum
 {
   GX_NOP = 0x00,
