@@ -236,8 +236,8 @@ public final class GameFileCacheManager
 
   private static void updateGameFileArray()
   {
-    GameFile[] gameFilesTemp = gameFileCache.getAllGames();
-    Arrays.sort(gameFilesTemp, (lhs, rhs) -> lhs.getTitle().compareToIgnoreCase(rhs.getTitle()));
-    gameFiles.postValue(gameFilesTemp);
+    //GameFile[] gameFilesTemp = gameFileCache.getAllGames();
+    //Arrays.sort(gameFilesTemp, (lhs, rhs) -> lhs.getTitle().compareToIgnoreCase(rhs.getTitle()));
+    gameFiles.postValue(gameFileCache.getAllGames());
   }
 }
