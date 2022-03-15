@@ -542,11 +542,11 @@ void Renderer::DrawDebugText()
   const Core::PerformanceStatistics& pstats = Core::GetPerformanceStatistics();
   if (pstats.Speed < 95)
   {
-    RenderText(m_debug_title_text, 10, 18, 0xFFFF0000);
+    RenderText(m_debug_title_text, 10, 18, 0xFFFF0000); // red
   }
   else
   {
-    RenderText(m_debug_title_text, 10, 18, 0xFF00FFFF);
+    RenderText(m_debug_title_text, 10, 18, 0xFF00FFFF); // blue
   }
 }
 

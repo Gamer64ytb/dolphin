@@ -236,8 +236,12 @@ public final class GameFileCacheManager
 
   private static void updateGameFileArray()
   {
-    //GameFile[] gameFilesTemp = gameFileCache.getAllGames();
-    //Arrays.sort(gameFilesTemp, (lhs, rhs) -> lhs.getTitle().compareToIgnoreCase(rhs.getTitle()));
-    gameFiles.postValue(gameFileCache.getAllGames());
+    GameFile[] gameFilesTemp = gameFileCache.getAllGames();
+    Arrays.sort(gameFilesTemp, (lhs, rhs) -> {
+      // getGameId(): MMJ style; getTitle(): Official style.
+      int ret = lhs.getGameId().compareToIgnoreCase(rhs.getGameId());
+      return ret == 0 ? Integer.compare(lhs.getDiscNumber(), rhs.getDiscNumber()) : ret;
+    });
+    gameFiles.postValue(gameFilesTemp);
   }
 }
