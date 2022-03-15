@@ -529,7 +529,7 @@ void Renderer::CheckForConfigChanges()
     BPFunctions::SetScissor();
   }
 
-  // Stereo mode change requires recompiling our post processing pipeline for rendering the UI.
+  // bits changes requires recompiling our post processing pipeline for rendering the UI.
   if (changed_bits)
   {
     m_post_processor->RecompilePipeline();
