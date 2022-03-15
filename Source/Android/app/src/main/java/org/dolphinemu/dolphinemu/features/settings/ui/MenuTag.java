@@ -19,7 +19,6 @@ public enum MenuTag
   DEBUG("debug"),
   GRAPHICS("graphics"),
   ENHANCEMENTS("enhancements"),
-  STEREOSCOPY("stereoscopy"),
   HACKS("hacks"),
   ADVANCED_GRAPHICS("advanced_graphics"),
   GCPAD_TYPE("gc_pad_type"),

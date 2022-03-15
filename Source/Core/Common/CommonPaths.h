@@ -64,7 +64,6 @@
 #define THEMES_DIR "Themes"
 #define STYLES_DIR "Styles"
 #define GBASAVES_DIR "Saves"
-#define ANAGLYPH_DIR "Anaglyph"
 #define PASSIVE_DIR "Passive"
 #define PIPES_DIR "Pipes"
 #define MEMORYWATCHER_DIR "MemoryWatcher"

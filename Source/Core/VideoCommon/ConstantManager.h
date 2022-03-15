@@ -90,7 +90,6 @@ struct VertexShaderConstants
 
 struct GeometryShaderConstants
 {
-  float4 stereoparams;
   float4 lineptparams;
   int4 texoffset;
 };

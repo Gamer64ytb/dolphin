@@ -227,7 +227,7 @@ void* GLContextWGL::GetFuncAddress(const std::string& name)
 
 // Create rendering window.
 // Call browser: Core.cpp:EmuThread() > main.cpp:Video_Initialize()
-bool GLContextWGL::Initialize(const WindowSystemInfo& wsi, bool stereo, bool core)
+bool GLContextWGL::Initialize(const WindowSystemInfo& wsi, bool core)
 {
   if (!wsi.render_surface)
     return false;
@@ -246,8 +246,6 @@ bool GLContextWGL::Initialize(const WindowSystemInfo& wsi, bool stereo, bool cor
   m_backbuffer_width = twidth;
   m_backbuffer_height = theight;
 
-  const DWORD stereo_flag = stereo ? PFD_STEREO : 0;
-
   // clang-format off
   static const PIXELFORMATDESCRIPTOR pfd = {
       sizeof(PIXELFORMATDESCRIPTOR),  // Size Of This Pixel Format Descriptor
@@ -255,7 +253,7 @@ bool GLContextWGL::Initialize(const WindowSystemInfo& wsi, bool stereo, bool cor
       PFD_DRAW_TO_WINDOW |            // Format Must Support Window
           PFD_SUPPORT_OPENGL |        // Format Must Support OpenGL
           PFD_DOUBLEBUFFER |          // Must Support Double Buffering
-          stereo_flag,                // Could Support Quad Buffering
+          0,                          // Could Support Quad Buffering
       PFD_TYPE_RGBA,                  // Request An RGBA Format
       32,                             // Select Our Color Depth
       0,

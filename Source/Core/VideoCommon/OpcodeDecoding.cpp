@@ -72,8 +72,6 @@ void InterpretDisplayListPreprocess(u32 address, u32 size)
 }
 }  // Anonymous namespace
 
-bool g_record_fifo_data = false;
-
 void Init()
 {
   s_is_fifo_error_seen = false;

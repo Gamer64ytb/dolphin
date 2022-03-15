@@ -50,15 +50,6 @@ void PostProcessingConfiguration::LoadShader(const std::string& shader)
 
   std::string sub_dir = "";
 
-  if (g_Config.stereo_mode == StereoMode::Anaglyph)
-  {
-    sub_dir = ANAGLYPH_DIR DIR_SEP;
-  }
-  else if (g_Config.stereo_mode == StereoMode::Passive)
-  {
-    sub_dir = PASSIVE_DIR DIR_SEP;
-  }
-
   // loading shader code
   std::string code;
   std::string path = File::GetUserPath(D_SHADERS_IDX) + sub_dir + shader + ".glsl";
@@ -370,11 +361,6 @@ static std::vector<std::string> GetShaders(const std::string& sub_dir = "")
 std::vector<std::string> PostProcessing::GetShaderList()
 {
   return GetShaders();
-}
-
-std::vector<std::string> PostProcessing::GetAnaglyphShaderList()
-{
-  return GetShaders(ANAGLYPH_DIR DIR_SEP);
 }
 
 std::vector<std::string> PostProcessing::GetPassiveShaderList()

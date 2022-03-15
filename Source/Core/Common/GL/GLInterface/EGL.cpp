@@ -139,7 +139,7 @@ EGLNativeWindowType GLContextEGL::GetEGLNativeWindow(EGLConfig config)
 
 // Create rendering window.
 // Call browser: Core.cpp:EmuThread() > main.cpp:Video_Initialize()
-bool GLContextEGL::Initialize(const WindowSystemInfo& wsi, bool stereo, bool core)
+bool GLContextEGL::Initialize(const WindowSystemInfo& wsi, bool core)
 {
   EGLint egl_major, egl_minor;
   bool supports_core_profile = false;

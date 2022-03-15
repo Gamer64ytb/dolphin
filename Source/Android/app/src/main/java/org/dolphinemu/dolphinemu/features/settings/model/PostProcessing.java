@@ -10,8 +10,5 @@ public class PostProcessing
   public static native String[] getShaderList();
 
   @NonNull
-  public static native String[] getAnaglyphShaderList();
-
-  @NonNull
   public static native String[] getPassiveShaderList();
 }

@@ -93,7 +93,8 @@ ShaderCode GenerateVertexShader(APIType api_type)
 
 ShaderCode GeneratePixelShader(APIType api_type, const UidData* uid_data)
 {
-  const bool mono_depth = uid_data->is_depth_copy && g_ActiveConfig.bStereoEFBMonoDepth;
+  // && true used for save state compatibility
+  const bool mono_depth = uid_data->is_depth_copy && true;
 
   ShaderCode out;
   WriteHeader(api_type, out);

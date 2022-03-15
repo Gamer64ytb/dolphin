@@ -46,7 +46,7 @@ SwapChain::~SwapChain()
 
 bool SwapChain::WantsStereo()
 {
-  return g_ActiveConfig.stereo_mode == StereoMode::QuadBuffer;
+  return false;
 }
 
 u32 SwapChain::GetSwapChainFlags() const

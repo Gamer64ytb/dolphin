@@ -49,7 +49,6 @@ public final class SettingsFragment extends Fragment implements SettingsFragment
     titles.put(MenuTag.DEBUG, R.string.debug_submenu);
     titles.put(MenuTag.GRAPHICS, R.string.graphics_settings);
     titles.put(MenuTag.ENHANCEMENTS, R.string.enhancements_submenu);
-    titles.put(MenuTag.STEREOSCOPY, R.string.stereoscopy_submenu);
     titles.put(MenuTag.HACKS, R.string.hacks_submenu);
     titles.put(MenuTag.ADVANCED_GRAPHICS, R.string.advanced_graphics_submenu);
     titles.put(MenuTag.CONFIG_LOG, R.string.log_submenu);

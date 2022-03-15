@@ -836,7 +836,7 @@ uint WrapCoord(int coord, uint wrap, int size) {{
 }
 
 static void WriteStage(ShaderCode& out, const pixel_shader_uid_data* uid_data, int n,
-                       APIType api_type, bool stereo);
+                       APIType api_type);
 static void WriteTevRegular(ShaderCode& out, std::string_view components, TevBias bias, TevOp op,
                             bool clamp, TevScale scale, bool alpha);
 static void WriteAlphaTest(ShaderCode& out, const pixel_shader_uid_data* uid_data, APIType api_type,
@@ -853,7 +853,6 @@ ShaderCode GeneratePixelShaderCode(APIType api_type, const ShaderHostConfig& hos
   const bool per_pixel_lighting = g_ActiveConfig.bEnablePixelLighting;
   const bool msaa = host_config.msaa;
   const bool ssaa = host_config.ssaa;
-  const bool stereo = host_config.stereo;
   const u32 numStages = uid_data->genMode_numtevstages + 1;
 
   out.Write("// Pixel Shader for TEV stages\n");
@@ -966,9 +965,6 @@ ShaderCode GeneratePixelShaderCode(APIType api_type, const ShaderHostConfig& hos
       GenerateVSOutputMembers(out, api_type, uid_data->genMode_numtexgens, host_config,
                               GetInterpolationQualifier(msaa, ssaa, true, true));
 
-      if (stereo)
-        out.Write("\tflat int layer;\n");
-
       out.Write("}};\n");
     }
     else
@@ -1050,12 +1046,9 @@ ShaderCode GeneratePixelShaderCode(APIType api_type, const ShaderHostConfig& hos
       out.Write(",\n  in float clipDist0 : SV_ClipDistance0\n"
                 ",\n  in float clipDist1 : SV_ClipDistance1\n");
     }
-    if (stereo)
-      out.Write(",\n  in uint layer : SV_RenderTargetArrayIndex\n");
     out.Write("        ) {{\n");
   }
-  if (!stereo)
-    out.Write("\tint layer = 0;\n");
+  out.Write("\tint layer = 0;\n");
 
   out.Write("\tint4 c0 = " I_COLORS "[1], c1 = " I_COLORS "[2], c2 = " I_COLORS
             "[3], prev = " I_COLORS "[0];\n"
@@ -1144,7 +1137,7 @@ ShaderCode GeneratePixelShaderCode(APIType api_type, const ShaderHostConfig& hos
   for (u32 i = 0; i < numStages; i++)
   {
     // Build the equation for this stage
-    WriteStage(out, uid_data, i, api_type, stereo);
+    WriteStage(out, uid_data, i, api_type);
   }
 
   {
@@ -1268,7 +1261,7 @@ ShaderCode GeneratePixelShaderCode(APIType api_type, const ShaderHostConfig& hos
 }
 
 static void WriteStage(ShaderCode& out, const pixel_shader_uid_data* uid_data, int n,
-                       APIType api_type, bool stereo)
+                       APIType api_type)
 {
   const auto& stage = uid_data->stagehash[n];
   out.Write("\n\t// TEV stage {}\n", n);

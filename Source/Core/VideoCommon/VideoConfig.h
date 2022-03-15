@@ -31,16 +31,6 @@ enum class AspectMode : int
   Stretch,
 };
 
-enum class StereoMode : int
-{
-  Off,
-  SBS,
-  TAB,
-  Anaglyph,
-  QuadBuffer,
-  Passive
-};
-
 enum class ShaderCompilationMode : int
 {
   Synchronous,
@@ -142,15 +132,6 @@ struct VideoConfig final
   u32 iMissingColorValue = 0;
   bool bFastTextureSampling = false;
   bool bPaletteTextureCopy = false;
-
-  // Stereoscopy
-  StereoMode stereo_mode{};
-  int iStereoDepth = 0;
-  int iStereoConvergence = 0;
-  int iStereoConvergencePercentage = 0;
-  bool bStereoSwapEyes = false;
-  bool bStereoEFBMonoDepth = false;
-  int iStereoDepthPercentage = 0;
 
   // D3D only config, mostly to be merged into the above
   int iAdapter = 0;

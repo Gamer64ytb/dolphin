@@ -549,8 +549,7 @@ Renderer::Renderer(std::unique_ptr<GLContext> main_gl_context, float backbuffer_
       g_ogl_config.bSupports2DTextureStorageMultisample = true;
       g_Config.backend_info.bSupportsBitfield = true;
       g_Config.backend_info.bSupportsDynamicSamplerIndexing = g_ogl_config.bSupportsAEP;
-      if (g_ActiveConfig.stereo_mode != StereoMode::Off && g_ActiveConfig.iMultisamples > 1 &&
-          !g_ogl_config.bSupports3DTextureStorageMultisample)
+      if (g_ActiveConfig.iMultisamples > 1 && !g_ogl_config.bSupports3DTextureStorageMultisample)
       {
         // GLES 3.1 can't support stereo rendering and MSAA
         OSD::AddMessage("MSAA Stereo rendering isn't supported by your GPU.", 10000);
@@ -952,9 +951,7 @@ void Renderer::RenderXFBToScreen(const MathUtil::Rectangle<int>& target_rc,
                                  const AbstractTexture* source_texture,
                                  const MathUtil::Rectangle<int>& source_rc)
 {
-  // Quad-buffered stereo is annoying on GL.
-  if (g_ActiveConfig.stereo_mode != StereoMode::QuadBuffer)
-    return ::Renderer::RenderXFBToScreen(target_rc, source_texture, source_rc);
+  return ::Renderer::RenderXFBToScreen(target_rc, source_texture, source_rc);
 
   glDrawBuffer(GL_BACK_LEFT);
   m_post_processor->BlitFromTexture(target_rc, source_rc, source_texture, 0);

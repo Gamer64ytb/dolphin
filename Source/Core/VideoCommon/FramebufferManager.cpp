@@ -137,7 +137,7 @@ AbstractTextureFormat FramebufferManager::GetEFBDepthCopyFormat()
 
 static u32 CalculateEFBLayers()
 {
-  return (g_ActiveConfig.stereo_mode != StereoMode::Off) ? 2 : 1;
+  return 1;
 }
 
 TextureConfig FramebufferManager::GetEFBColorTextureConfig()

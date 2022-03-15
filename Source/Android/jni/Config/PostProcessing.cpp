@@ -19,13 +19,6 @@ Java_org_dolphinemu_dolphinemu_features_settings_model_PostProcessing_getShaderL
 }
 
 JNIEXPORT jobjectArray JNICALL
-Java_org_dolphinemu_dolphinemu_features_settings_model_PostProcessing_getAnaglyphShaderList(
-    JNIEnv* env, jclass)
-{
-  return VectorToJStringArray(env, VideoCommon::PostProcessing::GetAnaglyphShaderList());
-}
-
-JNIEXPORT jobjectArray JNICALL
 Java_org_dolphinemu_dolphinemu_features_settings_model_PostProcessing_getPassiveShaderList(
     JNIEnv* env, jclass)
 {

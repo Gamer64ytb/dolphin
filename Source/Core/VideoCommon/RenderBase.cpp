@@ -420,37 +420,17 @@ Renderer::ConvertStereoRectangle(const MathUtil::Rectangle<int>& rc) const
 {
   // Resize target to half its original size
   auto draw_rc = rc;
-  if (g_ActiveConfig.stereo_mode == StereoMode::TAB)
-  {
-    // The height may be negative due to flipped rectangles
-    int height = rc.bottom - rc.top;
-    draw_rc.top += height / 4;
-    draw_rc.bottom -= height / 4;
-  }
-  else
-  {
-    int width = rc.right - rc.left;
-    draw_rc.left += width / 4;
-    draw_rc.right -= width / 4;
-  }
+  int width = rc.right - rc.left;
+  draw_rc.left += width / 4;
+  draw_rc.right -= width / 4;
 
   // Create two target rectangle offset to the sides of the backbuffer
   auto left_rc = draw_rc;
   auto right_rc = draw_rc;
-  if (g_ActiveConfig.stereo_mode == StereoMode::TAB)
-  {
-    left_rc.top -= m_backbuffer_height / 4;
-    left_rc.bottom -= m_backbuffer_height / 4;
-    right_rc.top += m_backbuffer_height / 4;
-    right_rc.bottom += m_backbuffer_height / 4;
-  }
-  else
-  {
-    left_rc.left -= m_backbuffer_width / 4;
-    left_rc.right -= m_backbuffer_width / 4;
-    right_rc.left += m_backbuffer_width / 4;
-    right_rc.right += m_backbuffer_width / 4;
-  }
+  left_rc.left -= m_backbuffer_width / 4;
+  left_rc.right -= m_backbuffer_width / 4;
+  right_rc.left += m_backbuffer_width / 4;
+  right_rc.right += m_backbuffer_width / 4;
 
   return std::make_tuple(left_rc, right_rc);
 }
@@ -465,7 +445,6 @@ void Renderer::SaveScreenshot(std::string filename)
 void Renderer::CheckForConfigChanges()
 {
   const ShaderHostConfig old_shader_host_config = ShaderHostConfig::GetCurrent();
-  const StereoMode old_stereo = g_ActiveConfig.stereo_mode;
   const u32 old_multisamples = g_ActiveConfig.iMultisamples;
   const int old_anisotropy = g_ActiveConfig.iMaxAnisotropy;
   const int old_efb_access_tile_size = g_ActiveConfig.iEFBAccessTileSize;
@@ -500,8 +479,6 @@ void Renderer::CheckForConfigChanges()
   u32 changed_bits = 0;
   if (old_shader_host_config.bits != new_host_config.bits)
     changed_bits |= CONFIG_CHANGE_BIT_HOST_CONFIG;
-  if (old_stereo != g_ActiveConfig.stereo_mode)
-    changed_bits |= CONFIG_CHANGE_BIT_STEREO_MODE;
   if (old_multisamples != g_ActiveConfig.iMultisamples)
     changed_bits |= CONFIG_CHANGE_BIT_MULTISAMPLES;
   if (old_anisotropy != g_ActiveConfig.iMaxAnisotropy)
@@ -530,8 +507,7 @@ void Renderer::CheckForConfigChanges()
   }
 
   // Framebuffer changed?
-  if (changed_bits & (CONFIG_CHANGE_BIT_MULTISAMPLES | CONFIG_CHANGE_BIT_STEREO_MODE |
-                      CONFIG_CHANGE_BIT_TARGET_SIZE))
+  if (changed_bits & (CONFIG_CHANGE_BIT_MULTISAMPLES | CONFIG_CHANGE_BIT_TARGET_SIZE))
   {
     g_framebuffer_manager->RecreateEFBFramebuffer();
   }
@@ -554,7 +530,7 @@ void Renderer::CheckForConfigChanges()
   }
 
   // Stereo mode change requires recompiling our post processing pipeline for rendering the UI.
-  if (changed_bits & CONFIG_CHANGE_BIT_STEREO_MODE)
+  if (changed_bits)
   {
     m_post_processor->RecompilePipeline();
   }
@@ -1099,18 +1075,7 @@ void Renderer::RenderXFBToScreen(const MathUtil::Rectangle<int>& target_rc,
                                  const AbstractTexture* source_texture,
                                  const MathUtil::Rectangle<int>& source_rc)
 {
-  if (g_ActiveConfig.stereo_mode == StereoMode::SBS ||
-      g_ActiveConfig.stereo_mode == StereoMode::TAB)
-  {
-    const auto [left_rc, right_rc] = ConvertStereoRectangle(target_rc);
-
-    m_post_processor->BlitFromTexture(left_rc, source_rc, source_texture, 0);
-    m_post_processor->BlitFromTexture(right_rc, source_rc, source_texture, 1);
-  }
-  else
-  {
-    m_post_processor->BlitFromTexture(target_rc, source_rc, source_texture, 0);
-  }
+  m_post_processor->BlitFromTexture(target_rc, source_rc, source_texture, 0);
 }
 
 bool Renderer::IsFrameDumping() const

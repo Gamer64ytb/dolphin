@@ -159,19 +159,8 @@ void EnhancementsWidget::ConnectWidgets()
 void EnhancementsWidget::LoadPPShaders()
 {
   std::vector<std::string> shaders = VideoCommon::PostProcessing::GetShaderList();
-  if (g_Config.stereo_mode == StereoMode::Anaglyph)
-  {
-    shaders = VideoCommon::PostProcessing::GetAnaglyphShaderList();
-  }
-  else if (g_Config.stereo_mode == StereoMode::Passive)
-  {
-    shaders = VideoCommon::PostProcessing::GetPassiveShaderList();
-  }
 
   m_pp_effect->clear();
-
-  if (g_Config.stereo_mode != StereoMode::Anaglyph && g_Config.stereo_mode != StereoMode::Passive)
-    m_pp_effect->addItem(tr("(off)"));
 
   auto selected_shader = Config::Get(Config::GFX_ENHANCE_POST_SHADER);
 
@@ -186,11 +175,6 @@ void EnhancementsWidget::LoadPPShaders()
       found = true;
     }
   }
-
-  if (g_Config.stereo_mode == StereoMode::Anaglyph && !found)
-    m_pp_effect->setCurrentIndex(m_pp_effect->findText(QStringLiteral("dubois")));
-  else if (g_Config.stereo_mode == StereoMode::Passive && !found)
-    m_pp_effect->setCurrentIndex(m_pp_effect->findText(QStringLiteral("horizontal")));
 
   const bool supports_postprocessing = g_Config.backend_info.bSupportsPostProcessing;
   m_pp_effect->setEnabled(supports_postprocessing);
@@ -263,10 +247,8 @@ void EnhancementsWidget::SaveSettings()
 
   Config::SetBaseOrCurrent(Config::GFX_SSAA, is_ssaa);
 
-  const bool anaglyph = g_Config.stereo_mode == StereoMode::Anaglyph;
-  const bool passive = g_Config.stereo_mode == StereoMode::Passive;
   Config::SetBaseOrCurrent(Config::GFX_ENHANCE_POST_SHADER,
-                           (!anaglyph && !passive && m_pp_effect->currentIndex() == 0) ?
+                           (m_pp_effect->currentIndex() == 0) ?
                                "(off)" :
                                m_pp_effect->currentText().toStdString());
 

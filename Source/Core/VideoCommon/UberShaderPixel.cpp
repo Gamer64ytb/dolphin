@@ -52,7 +52,6 @@ ShaderCode GenPixelShader(APIType api_type, const ShaderHostConfig& host_config,
   const bool per_pixel_lighting = host_config.per_pixel_lighting;
   const bool msaa = host_config.msaa;
   const bool ssaa = host_config.ssaa;
-  const bool stereo = host_config.stereo;
   const bool use_dual_source = host_config.backend_dual_source_blend;
   const bool use_shader_blend = !use_dual_source && host_config.backend_shader_framebuffer_fetch;
   const bool early_depth = uid_data->early_depth != 0;
@@ -112,9 +111,6 @@ ShaderCode GenPixelShader(APIType api_type, const ShaderHostConfig& host_config,
       out.Write("VARYING_LOCATION(0) in VertexData {{\n");
       GenerateVSOutputMembers(out, api_type, numTexgen, host_config,
                               GetInterpolationQualifier(msaa, ssaa, true, true));
-
-      if (stereo)
-        out.Write("  flat int layer;\n");
 
       out.Write("}};\n\n");
     }
@@ -728,12 +724,9 @@ ShaderCode GenPixelShader(APIType api_type, const ShaderHostConfig& host_config,
     }
     out.Write(",\n  in float clipDist0 : SV_ClipDistance0\n"
               ",\n  in float clipDist1 : SV_ClipDistance1\n");
-    if (stereo)
-      out.Write(",\n  in uint layer : SV_RenderTargetArrayIndex\n");
     out.Write("\n        ) {{\n");
   }
-  if (!stereo)
-    out.Write("  int layer = 0;\n");
+  out.Write("  int layer = 0;\n");
 
   out.Write("  int3 tevcoord = int3(0, 0, 0);\n"
             "  State s;\n"

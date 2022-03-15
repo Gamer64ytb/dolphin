@@ -94,20 +94,6 @@ extern const Info<bool> GFX_ENHANCE_DISABLE_COPY_FILTER;
 extern const Info<bool> GFX_ENHANCE_ARBITRARY_MIPMAP_DETECTION;
 extern const Info<float> GFX_ENHANCE_ARBITRARY_MIPMAP_DETECTION_THRESHOLD;
 
-// Graphics.Stereoscopy
-
-extern const Info<StereoMode> GFX_STEREO_MODE;
-extern const Info<int> GFX_STEREO_DEPTH;
-extern const Info<int> GFX_STEREO_CONVERGENCE_PERCENTAGE;
-extern const Info<bool> GFX_STEREO_SWAP_EYES;
-extern const Info<int> GFX_STEREO_CONVERGENCE;
-extern const Info<bool> GFX_STEREO_EFB_MONO_DEPTH;
-extern const Info<int> GFX_STEREO_DEPTH_PERCENTAGE;
-
-// Stereoscopy pseudo-limits for consistent behavior between enhancements tab and hotkeys.
-static constexpr int GFX_STEREO_DEPTH_MAXIMUM = 100;
-static constexpr int GFX_STEREO_CONVERGENCE_MAXIMUM = 200;
-
 // Graphics.Hacks
 
 extern const Info<bool> GFX_HACK_EFB_ACCESS_ENABLE;

@@ -62,6 +62,7 @@ public enum BooleanSetting implements AbstractBooleanSetting
   UPDATER_PERMISSION_ASKED(Settings.FILE_DOLPHIN, Settings.SECTION_INI_ANDROID,
           "UpdaterPermissionAsked", false),
 
+  // in-game ui
   MAIN_USE_NEW_EMULATION_UI(Settings.FILE_DOLPHIN, Settings.SECTION_INI_ANDROID,
           "UseNewEmulationUI", true),
 
@@ -192,8 +193,6 @@ public enum BooleanSetting implements AbstractBooleanSetting
           "DisableCopyFilter", true),
   GFX_ENHANCE_ARBITRARY_MIPMAP_DETECTION(Settings.FILE_GFX, Settings.SECTION_GFX_ENHANCEMENTS,
           "ArbitraryMipmapDetection", true),
-
-  GFX_STEREO_SWAP_EYES(Settings.FILE_GFX, Settings.SECTION_STEREOSCOPY, "StereoSwapEyes", false),
 
   GFX_HACK_EFB_ACCESS_ENABLE(Settings.FILE_GFX, Settings.SECTION_GFX_HACKS, "EFBAccessEnable",
           true),

@@ -147,7 +147,6 @@ union ShaderHostConfig
 
   BitField<0, 1, bool, u32> msaa;
   BitField<1, 1, bool, u32> ssaa;
-  BitField<2, 1, bool, u32> stereo;
   BitField<3, 1, bool, u32> wireframe;
   BitField<4, 1, bool, u32> per_pixel_lighting;
   BitField<5, 1, bool, u32> vertex_rounding;
@@ -236,7 +235,6 @@ std::string BitfieldExtract(std::string_view source)
 #define I_PIXELCENTERCORRECTION "cpixelcenter"
 #define I_VIEWPORT_SIZE "cviewport"
 
-#define I_STEREOPARAMS "cstereo"
 #define I_LINEPTPARAMS "clinept"
 #define I_TEXOFFSET "ctexoffset"
 

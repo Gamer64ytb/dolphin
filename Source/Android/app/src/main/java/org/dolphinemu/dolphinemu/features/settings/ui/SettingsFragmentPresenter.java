@@ -40,7 +40,6 @@ import org.dolphinemu.dolphinemu.features.settings.model.view.StringSingleChoice
 import org.dolphinemu.dolphinemu.features.settings.model.view.SubmenuSetting;
 import org.dolphinemu.dolphinemu.features.settings.utils.SettingsFile;
 import org.dolphinemu.dolphinemu.ui.main.MainActivity;
-import org.dolphinemu.dolphinemu.utils.EGLHelper;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -178,10 +177,6 @@ public final class SettingsFragmentPresenter
 
       case ENHANCEMENTS:
         addEnhanceSettings(sl);
-        break;
-
-      case STEREOSCOPY:
-        addStereoSettings(sl);
         break;
 
       case HACKS:
@@ -414,7 +409,7 @@ public final class SettingsFragmentPresenter
             MainActivity.REQUEST_DIRECTORY, "/Dump"));
     sl.add(new FilePicker(mContext, StringSetting.MAIN_LOAD_PATH, R.string.load_path, 0,
             MainActivity.REQUEST_DIRECTORY, "/Load"));
-    sl.add(new FilePicker(mContext, StringSetting.MAIN_RESOURCEPACK_PATH,
+    sl.add(new FilePicker(mContext, StringSetting.MAIN_RESOURCE_PACK_PATH,
             R.string.resource_pack_path, 0, MainActivity.REQUEST_DIRECTORY, "/ResourcePacks"));
     sl.add(new FilePicker(mContext, StringSetting.MAIN_SD_PATH, R.string.SD_card_path, 0,
             MainActivity.REQUEST_SD_FILE, "/Wii/sd.raw"));
@@ -655,10 +650,7 @@ public final class SettingsFragmentPresenter
             R.string.anisotropic_filtering, R.string.anisotropic_filtering_description,
             R.array.anisotropicFilteringEntries, R.array.anisotropicFilteringValues));
 
-    int stereoModeValue = IntSetting.GFX_STEREO_MODE.getInt(mSettings);
-    final int anaglyphMode = 3;
-    String[] shaderList = stereoModeValue == anaglyphMode ?
-            PostProcessing.getAnaglyphShaderList() : PostProcessing.getShaderList();
+    String[] shaderList = PostProcessing.getShaderList();
 
     String[] shaderListEntries = new String[shaderList.length + 1];
     shaderListEntries[0] = mContext.getString(R.string.off);
@@ -687,18 +679,6 @@ public final class SettingsFragmentPresenter
             R.string.arbitrary_mipmap_detection, R.string.arbitrary_mipmap_detection_description));
     sl.add(new CheckBoxSetting(mContext, BooleanSetting.GFX_WIDESCREEN_HACK,
             R.string.wide_screen_hack, R.string.wide_screen_hack_description));
-
-    // Check if we support stereo
-    // If we support desktop GL then we must support at least OpenGL 3.2
-    // If we only support OpenGLES then we need both OpenGLES 3.1 and AEP
-    EGLHelper helper = new EGLHelper(EGLHelper.EGL_OPENGL_ES2_BIT);
-
-    if ((helper.supportsOpenGL() && helper.GetVersion() >= 320) ||
-            (helper.supportsGLES3() && helper.GetVersion() >= 310 &&
-                    helper.SupportsExtension("GL_ANDROID_extension_pack_es31a")))
-    {
-      sl.add(new SubmenuSetting(mContext, R.string.stereoscopy_submenu, MenuTag.STEREOSCOPY));
-    }
   }
 
   private void addHackSettings(ArrayList<SettingsItem> sl)
@@ -833,19 +813,6 @@ public final class SettingsFragmentPresenter
             R.string.debug_jitbranchoff, 0));
     sl.add(new CheckBoxSetting(mContext, BooleanSetting.MAIN_JIT_REGISTER_CACHE_OFF,
             R.string.debug_jitregistercacheoff, 0));
-  }
-
-  private void addStereoSettings(ArrayList<SettingsItem> sl)
-  {
-    sl.add(new SingleChoiceSetting(mContext, IntSetting.GFX_STEREO_MODE, R.string.stereoscopy_mode,
-            0, R.array.stereoscopyEntries, R.array.stereoscopyValues));
-    sl.add(new IntSliderSetting(mContext, IntSetting.GFX_STEREO_DEPTH, R.string.stereoscopy_depth,
-            R.string.stereoscopy_depth_description, 0, 100, "%"));
-    sl.add(new IntSliderSetting(mContext, IntSetting.GFX_STEREO_CONVERGENCE_PERCENTAGE,
-            R.string.stereoscopy_convergence, R.string.stereoscopy_convergence_description, 0, 200,
-            "%"));
-    sl.add(new CheckBoxSetting(mContext, BooleanSetting.GFX_STEREO_SWAP_EYES,
-            R.string.stereoscopy_swap_eyes, R.string.stereoscopy_swap_eyes_description));
   }
 
   private void addGcPadSubSettings(ArrayList<SettingsItem> sl, int gcPadNumber, int gcPadType)
