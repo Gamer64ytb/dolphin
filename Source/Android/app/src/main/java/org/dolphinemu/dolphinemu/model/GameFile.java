@@ -98,11 +98,12 @@ public class GameFile
   private static final int COVER_CACHE = 1;
   private static final int COVER_NONE = 2;
   private int mCoverType = COVER_UNKNOWN;
+
   public void loadGameBanner(ImageView imageView)
   {
-    if(mCoverType == COVER_UNKNOWN)
+    if (mCoverType == COVER_UNKNOWN)
     {
-      if(loadFromCache(imageView))
+      if (loadFromCache(imageView))
       {
         mCoverType = COVER_CACHE;
         return;
@@ -114,23 +115,26 @@ public class GameFile
         @Override public void onSuccess()
         {
           mCoverType = COVER_CACHE;
-          CoverHelper.saveCover(((BitmapDrawable) imageView.getDrawable()).getBitmap(), getCoverPath(imageView.getContext()));
+          CoverHelper.saveCover(((BitmapDrawable) imageView.getDrawable()).getBitmap(),
+                  getCoverPath(imageView.getContext()));
         }
+
         @Override public void onError(Exception e)
         {
-          if(loadFromISO(imageView))
+          if (loadFromISO(imageView))
           {
             mCoverType = COVER_CACHE;
           }
-          else if(NativeLibrary.isNetworkConnected(imageView.getContext()))
+          else if (NativeLibrary.isNetworkConnected(imageView.getContext()))
           {
             // save placeholder to file
-            CoverHelper.saveCover(((BitmapDrawable) imageView.getDrawable()).getBitmap(), getCoverPath(imageView.getContext()));
+            CoverHelper.saveCover(((BitmapDrawable) imageView.getDrawable()).getBitmap(),
+                    getCoverPath(imageView.getContext()));
           }
         }
       });
     }
-    else if(mCoverType == COVER_CACHE)
+    else if (mCoverType == COVER_CACHE)
     {
       loadFromCache(imageView);
     }
@@ -143,7 +147,7 @@ public class GameFile
   private boolean loadFromCache(ImageView imageView)
   {
     File file = new File(getCoverPath(imageView.getContext()));
-    if(file.exists())
+    if (file.exists())
     {
       imageView.setImageURI(Uri.parse("file://" + getCoverPath(imageView.getContext())));
       return true;
@@ -154,10 +158,47 @@ public class GameFile
   private void loadFromNetwork(ImageView imageView, Callback callback)
   {
     Picasso.get()
-            .load(CoverHelper.buildGameTDBUrl(this))
+            .load(CoverHelper.buildGameTDBUrl(this, null))
             .placeholder(R.drawable.no_banner)
             .error(R.drawable.no_banner)
-            .into(imageView, callback);
+            .into(imageView, new Callback()
+            {
+              @Override
+              public void onSuccess()
+              {
+                callback.onSuccess();
+              }
+
+              @Override
+              public void onError(Exception e)
+              {
+                String id = getGameTdbId();
+                String region = null;
+                if (id.length() < 3)
+                {
+                  callback.onError(e);
+                  return;
+                }
+                else if (id.charAt(3) != 'E')
+                {
+                  region = "US";
+                }
+                else if (id.charAt(3) != 'J')
+                {
+                  region = "JA";
+                }
+                else
+                {
+                  callback.onError(e);
+                  return;
+                }
+                Picasso.get()
+                        .load(CoverHelper.buildGameTDBUrl(GameFile.this, region))
+                        .placeholder(R.drawable.no_banner)
+                        .error(R.drawable.no_banner)
+                        .into(imageView, callback);
+              }
+            });
   }
 
   private boolean loadFromISO(ImageView imageView)

@@ -10,11 +10,42 @@ import java.io.FileOutputStream;
 
 public final class CoverHelper
 {
-  public static String buildGameTDBUrl(GameFile game)
+  public static String buildGameTDBUrl(GameFile game, String region)
   {
-    String baseUrl = "https://art.gametdb.com/wii/cover/%s/%s.png";
-    String region = getRegion(game);
-    return String.format(baseUrl, region, game.getGameTdbId());
+    final String baseUrl = "https://art.gametdb.com/wii/cover/%s/%s.png";
+    String id = game.getGameTdbId();
+    if (region == null)
+    {
+      region = getRegion(game);
+    }
+    else
+    {
+      id = toRegion(id, region);
+    }
+    return String.format(baseUrl, region, id);
+  }
+
+  private static String toRegion(String id, String region)
+  {
+    if (id == null || id.length() < 4)
+    {
+      // ignore
+    }
+    else if ("JA".equals(region))
+    {
+      if(id.charAt(3) != 'J')
+      {
+        return id.substring(0, 3) + "J" + id.substring(4);
+      }
+    }
+    else if ("US".equals(region))
+    {
+      if(id.charAt(3) != 'E')
+      {
+        return id.substring(0, 3) + "E" + id.substring(4);
+      }
+    }
+    return id;
   }
 
   public static String getRegion(GameFile game)
