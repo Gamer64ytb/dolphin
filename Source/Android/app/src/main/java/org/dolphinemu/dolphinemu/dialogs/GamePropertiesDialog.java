@@ -7,7 +7,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -131,6 +130,22 @@ public class GamePropertiesDialog extends DialogFragment
     buttonIniEditor.setOnClickListener(view ->
             IniEditorDialog.newInstance(gameId)
                     .show(getFragmentManager(), "IniEditorDialog"));
+
+    Button buttonGCControls = contents.findViewById(R.id.button_gcpad_settings);
+    buttonGCControls.setOnClickListener(view ->
+            SettingsActivity.launch(getContext(), MenuTag.GCPAD_TYPE, gameId, revision, isWii));
+
+    Button buttonWiiControls = contents.findViewById(R.id.button_wiimote_settings);
+    if (isWii)
+    {
+      buttonWiiControls.setOnClickListener(view ->
+              SettingsActivity.launch(getActivity(), MenuTag.WIIMOTE, gameId, revision, isWii));
+    }
+    else
+    {
+      buttonWiiControls.setEnabled(false);
+    }
+
 
     Button buttonClearSettings = contents.findViewById(R.id.properties_clear_settings);
     buttonClearSettings.setOnClickListener(view ->

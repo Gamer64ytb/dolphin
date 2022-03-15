@@ -21,9 +21,13 @@
         app:showAsAction="never"/>
 
     <item
-        android:id="@+id/menu_refresh"
-        android:title="@string/grid_menu_refresh"
-        android:icon="@drawable/ic_refresh"
+        android:id="@+id/menu_settings_gcpad"
+        android:title="@string/gcpad_settings"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/menu_settings_wiimote"
+        android:title="@string/wiimote_settings"
         app:showAsAction="never"/>
 
     <item
@@ -55,6 +59,12 @@
     <item
         android:id="@+id/menu_online_system_update"
         android:title="@string/grid_menu_online_system_update"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/menu_refresh"
+        android:title="@string/grid_menu_refresh"
+        android:icon="@drawable/ic_refresh"
         app:showAsAction="never"/>
 
     <item

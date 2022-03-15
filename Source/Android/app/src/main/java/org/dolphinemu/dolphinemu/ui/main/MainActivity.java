@@ -109,9 +109,12 @@ public final class MainActivity extends AppCompatActivity
           launchSettingsActivity(MenuTag.SETTINGS);
           return true;
 
-        case R.id.menu_refresh:
-          mSwipeRefreshLayout.setRefreshing(true);
-          GameFileCacheManager.startRescan(this);
+        case R.id.menu_settings_gcpad:
+          launchSettingsActivity(MenuTag.GCPAD_TYPE);
+          return true;
+
+        case R.id.menu_settings_wiimote:
+          launchSettingsActivity(MenuTag.WIIMOTE);
           return true;
 
         case R.id.menu_open_file:
@@ -139,6 +142,11 @@ public final class MainActivity extends AppCompatActivity
         case R.id.menu_import_nand_backup:
           new AfterDirectoryInitializationRunner().run(this, true,
                   () -> launchOpenFileActivity(REQUEST_NAND_BIN_FILE));
+          return true;
+
+        case R.id.menu_refresh:
+          mSwipeRefreshLayout.setRefreshing(true);
+          GameFileCacheManager.startRescan(this);
           return true;
 
         case R.id.updater_dialog:

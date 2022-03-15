@@ -11,9 +11,9 @@ public final class SubmenuSetting extends SettingsItem
 {
   private MenuTag mMenuKey;
 
-  public SubmenuSetting(Context context, int titleId, MenuTag menuKey)
+  public SubmenuSetting(Context context, int titleId, int descriptionId, MenuTag menuKey)
   {
-    super(context, titleId, 0);
+    super(context, titleId, descriptionId);
     mMenuKey = menuKey;
   }
 

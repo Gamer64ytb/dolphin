@@ -131,12 +131,10 @@ public final class SettingsFragmentPresenter
         addTopLevelSettings(sl);
         break;
 
-      case CONFIG:
-        addConfigSettings(sl);
-        break;
-
       case CONFIG_GENERAL:
+        addAdvancedSettings(sl);
         addGeneralSettings(sl);
+        addAudioSettings(sl);
         break;
 
       case CONFIG_INTERFACE:
@@ -226,33 +224,14 @@ public final class SettingsFragmentPresenter
 
   private void addTopLevelSettings(ArrayList<SettingsItem> sl)
   {
-    sl.add(new SubmenuSetting(mContext, R.string.config, MenuTag.CONFIG));
-    sl.add(new SubmenuSetting(mContext, R.string.graphics_settings, MenuTag.GRAPHICS));
-
-    if (!NativeLibrary.IsRunning())
-    {
-      sl.add(new SubmenuSetting(mContext, R.string.gcpad_settings, MenuTag.GCPAD_TYPE));
-      if (mSettings.isWii())
-        sl.add(new SubmenuSetting(mContext, R.string.wiimote_settings, MenuTag.WIIMOTE));
-    }
-
+    sl.add(new SubmenuSetting(mContext, R.string.general_submenu, 0, MenuTag.CONFIG_GENERAL));
+    sl.add(new SubmenuSetting(mContext, R.string.graphics_settings, 0, MenuTag.GRAPHICS));
+    sl.add(new SubmenuSetting(mContext, R.string.enhancements_submenu, 0, MenuTag.ENHANCEMENTS));
+    sl.add(new SubmenuSetting(mContext, R.string.hacks_submenu, 0, MenuTag.HACKS));
+    sl.add(new SubmenuSetting(mContext, R.string.interface_submenu, 0, MenuTag.CONFIG_INTERFACE));
+    sl.add(new SubmenuSetting(mContext, R.string.gamecube_submenu, 0, MenuTag.CONFIG_GAME_CUBE));
+    sl.add(new SubmenuSetting(mContext, R.string.wii_submenu, 0, MenuTag.CONFIG_WII));
     sl.add(new HeaderSetting(mContext, R.string.setting_clear_info, 0));
-  }
-
-  private void addConfigSettings(ArrayList<SettingsItem> sl)
-  {
-    sl.add(new SubmenuSetting(mContext, R.string.general_submenu, MenuTag.CONFIG_GENERAL));
-    sl.add(new SubmenuSetting(mContext, R.string.interface_submenu, MenuTag.CONFIG_INTERFACE));
-    sl.add(new SubmenuSetting(mContext, R.string.audio_submenu, MenuTag.CONFIG_AUDIO));
-    sl.add(new SubmenuSetting(mContext, R.string.paths_submenu, MenuTag.CONFIG_PATHS));
-    sl.add(new SubmenuSetting(mContext, R.string.gamecube_submenu, MenuTag.CONFIG_GAME_CUBE));
-    sl.add(new SubmenuSetting(mContext, R.string.wii_submenu, MenuTag.CONFIG_WII));
-    sl.add(new SubmenuSetting(mContext, R.string.advanced_submenu, MenuTag.CONFIG_ADVANCED));
-    sl.add(new SubmenuSetting(mContext, R.string.log_submenu, MenuTag.CONFIG_LOG));
-    // TODO (Gamer64): unused section, hide for now.
-    // sl.add(new SubmenuSetting(mContext, R.string.debug_submenu, MenuTag.DEBUG));
-    sl.add(new RunRunnable(mContext, R.string.user_data_submenu, 0, 0, 0,
-            () -> UserDataActivity.launch(mContext)));
   }
 
   private void addGeneralSettings(ArrayList<SettingsItem> sl)
@@ -306,6 +285,11 @@ public final class SettingsFragmentPresenter
     sl.add(new CheckBoxSetting(mContext, BooleanSetting.UPDATER_CHECK_AT_STARTUP,
             R.string.updater_check_startup,
             R.string.updater_check_startup_description));
+    sl.add(new HeaderSetting(mContext, R.string.graphics_more_settings, 0));
+    sl.add(new SubmenuSetting(mContext, R.string.paths_submenu, 0, MenuTag.CONFIG_PATHS));
+    sl.add(new SubmenuSetting(mContext, R.string.log_submenu, 0, MenuTag.CONFIG_LOG));
+    sl.add(new RunRunnable(mContext, R.string.user_data_submenu, 0, 0, 0,
+            () -> UserDataActivity.launch(mContext)));
   }
 
   private void addAudioSettings(ArrayList<SettingsItem> sl)
@@ -454,7 +438,7 @@ public final class SettingsFragmentPresenter
             R.string.wiimote_scanning, R.string.wiimote_scanning_description));
     sl.add(new CheckBoxSetting(mContext, BooleanSetting.MAIN_WIIMOTE_ENABLE_SPEAKER,
             R.string.wiimote_speaker, R.string.wiimote_speaker_description));
-    sl.add(new HeaderSetting(mContext, R.string.wiimote_ir, 0));
+    sl.add(new SubmenuSetting(mContext, R.string.general_submenu, 0, MenuTag.CONFIG_GENERAL));
     sl.add(new CheckBoxSetting(mContext, BooleanSetting.MAIN_IR_ALWAYS_RECENTER,
             R.string.emulation_ir_recenter,
             R.string.emulation_ir_recenter_description));
@@ -631,12 +615,6 @@ public final class SettingsFragmentPresenter
     sl.add(new PercentSliderSetting(mContext, FloatSetting.GFX_DISPLAY_SCALE,
             R.string.setting_display_scale,
             0, 0, 200, "%"));
-
-    sl.add(new HeaderSetting(mContext, R.string.graphics_more_settings, 0));
-    sl.add(new SubmenuSetting(mContext, R.string.enhancements_submenu, MenuTag.ENHANCEMENTS));
-    sl.add(new SubmenuSetting(mContext, R.string.hacks_submenu, MenuTag.HACKS));
-    sl.add(new SubmenuSetting(mContext, R.string.advanced_graphics_submenu,
-            MenuTag.ADVANCED_GRAPHICS));
   }
 
   private void addEnhanceSettings(ArrayList<SettingsItem> sl)
