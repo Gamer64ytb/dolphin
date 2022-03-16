@@ -139,6 +139,8 @@
     <string name="dual_core">Dual Core</string>
     <string name="dual_core_description">Split workload to two CPU cores instead of one. Increases speed.</string>
     <string name="enable_cheats">Enable Cheats</string>
+    <string name="skip_ipl">Skip IPL</string>
+    <string name="skip_ipl_description">Skip GameCube BIOS.</string>
     <string name="speed_limit">Speed Limit (0% = Unlimited)</string>
     <string name="overclock_warning">WARNING: Changing this from the default (100%) WILL break games and cause glitches. Please do not report bugs that occur with a non-default clock.</string>
     <string name="gamecube_submenu">GameCube</string>
@@ -238,6 +240,8 @@
     <string name="video_backend_description">Select the API used for graphics rendering.</string>
     <string name="show_fps">Show FPS</string>
     <string name="show_fps_description">Show the number of frames rendered per second as a measure of emulation speed.</string>
+    <string name="show_active_title">Show Active Title</string>
+    <string name="show_active_title_description">Show the game title with FPS counter.</string>
     <string name="font_scale">Font Scale</string>
     <string name="font_scale_description">Customize the FPS counter size.</string>
 

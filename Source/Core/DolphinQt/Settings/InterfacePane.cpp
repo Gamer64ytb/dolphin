@@ -264,7 +264,6 @@ void InterfacePane::LoadConfig()
   m_checkbox_confirm_on_stop->setChecked(startup_params.bConfirmStop);
   m_checkbox_use_panic_handlers->setChecked(Config::Get(Config::MAIN_USE_PANIC_HANDLERS));
   m_checkbox_enable_osd->setChecked(Config::Get(Config::MAIN_OSD_MESSAGES));
-  m_checkbox_show_active_title->setChecked(startup_params.m_show_active_title);
   m_checkbox_pause_on_focus_lost->setChecked(startup_params.m_PauseOnFocusLost);
   m_checkbox_use_covers->setChecked(Config::Get(Config::MAIN_USE_GAME_COVERS));
   m_checkbox_focused_hotkeys->setChecked(Config::Get(Config::MAIN_FOCUSED_HOTKEYS));
@@ -297,7 +296,6 @@ void InterfacePane::OnSaveConfig()
   settings.bConfirmStop = m_checkbox_confirm_on_stop->isChecked();
   Config::SetBase(Config::MAIN_USE_PANIC_HANDLERS, m_checkbox_use_panic_handlers->isChecked());
   Config::SetBase(Config::MAIN_OSD_MESSAGES, m_checkbox_enable_osd->isChecked());
-  settings.m_show_active_title = m_checkbox_show_active_title->isChecked();
   settings.m_PauseOnFocusLost = m_checkbox_pause_on_focus_lost->isChecked();
 
   Common::SetEnableAlert(Config::Get(Config::MAIN_USE_PANIC_HANDLERS));

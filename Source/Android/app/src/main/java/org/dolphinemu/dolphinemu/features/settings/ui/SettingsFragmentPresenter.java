@@ -248,6 +248,8 @@ public final class SettingsFragmentPresenter
             R.string.speed_limit, 0, 0, 200, "%"));
     sl.add(new SingleChoiceSetting(mContext, IntSetting.MAIN_FALLBACK_REGION,
             R.string.fallback_region, 0, R.array.regionEntries, R.array.regionValues));
+    sl.add(new CheckBoxSetting(mContext, BooleanSetting.MAIN_SKIP_IPL, R.string.skip_ipl,
+            R.string.skip_ipl_description));
     // TODO (Gamer64): don't use this for now, this is a fork!
     /* sl.add(new CheckBoxSetting(mContext, BooleanSetting.MAIN_ANALYTICS_ENABLED, R.string.analytics,
             0));
@@ -601,6 +603,9 @@ public final class SettingsFragmentPresenter
             R.string.video_backend, 0, R.array.videoBackendEntries, R.array.videoBackendValues));
     sl.add(new CheckBoxSetting(mContext, BooleanSetting.GFX_SHOW_FPS, R.string.show_fps,
             R.string.show_fps_description));
+    sl.add(new CheckBoxSetting(mContext, BooleanSetting.GFX_SHOW_ACTIVE_TITLE,
+            R.string.show_active_title,
+            R.string.show_active_title_description));
     sl.add(new PercentSliderSetting(mContext, FloatSetting.GFX_FONT_SCALE, R.string.font_scale,
             0, 0, 300, "%"));
     sl.add(new SingleChoiceSettingDynamicDescriptions(mContext,

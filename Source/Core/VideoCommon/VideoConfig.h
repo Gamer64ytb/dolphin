@@ -70,6 +70,7 @@ struct VideoConfig final
 
   // Information
   bool bShowFPS = false;
+  bool bShowActiveTitle = false;
   bool bShowNetPlayPing = false;
   bool bShowNetPlayMessages = false;
   bool bOverlayStats = false;

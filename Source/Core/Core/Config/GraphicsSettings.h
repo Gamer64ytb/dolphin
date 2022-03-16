@@ -30,6 +30,7 @@ extern const Info<float> GFX_DISPLAY_SCALE;
 extern const Info<bool> GFX_CROP;
 extern const Info<int> GFX_SAFE_TEXTURE_CACHE_COLOR_SAMPLES;
 extern const Info<bool> GFX_SHOW_FPS;
+extern const Info<bool> GFX_SHOW_ACTIVE_TITLE;
 extern const Info<bool> GFX_SHOW_NETPLAY_PING;
 extern const Info<bool> GFX_SHOW_NETPLAY_MESSAGES;
 extern const Info<float> GFX_FONT_SCALE;

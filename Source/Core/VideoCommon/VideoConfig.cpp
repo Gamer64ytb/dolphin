@@ -56,6 +56,7 @@ void VideoConfig::Refresh()
   bCrop = Config::Get(Config::GFX_CROP);
   iSafeTextureCache_ColorSamples = Config::Get(Config::GFX_SAFE_TEXTURE_CACHE_COLOR_SAMPLES);
   bShowFPS = Config::Get(Config::GFX_SHOW_FPS);
+  bShowActiveTitle = Config::Get(Config::GFX_SHOW_ACTIVE_TITLE);
   bShowNetPlayPing = Config::Get(Config::GFX_SHOW_NETPLAY_PING);
   bShowNetPlayMessages = Config::Get(Config::GFX_SHOW_NETPLAY_MESSAGES);
   fFontScale = Config::Get(Config::GFX_FONT_SCALE);

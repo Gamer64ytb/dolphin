@@ -222,7 +222,6 @@ struct SConfig
   float m_OCFactor;
   // other interface settings
   bool m_InterfaceExtendedFPSInfo;
-  bool m_show_active_title = false;
   bool m_use_builtin_title_database = true;
 
   std::string m_WirelessMac;

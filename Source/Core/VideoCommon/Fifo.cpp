@@ -223,30 +223,32 @@ void* PopFifoAuxBuffer(size_t size)
 }
 
 // Description: RunGpuLoop() sends data through this function.
-static void ReadDataFromFifo(u32 readPtr)
+static u32 ReadDataFromFifo(u32 readPtr)
 {
-  constexpr size_t len = 32;
-  if (len > static_cast<size_t>(s_video_buffer + FIFO_SIZE - s_video_buffer_write_ptr))
+  constexpr u32 len = 32;
+  u8* write_ptr = s_video_buffer_write_ptr;
+  if (len > (size_t)(s_video_buffer + FIFO_SIZE - write_ptr))
   {
-    const size_t existing_len = s_video_buffer_write_ptr - s_video_buffer_read_ptr;
+    const size_t existing_len = write_ptr - s_video_buffer_read_ptr;
     if (len > static_cast<size_t>(FIFO_SIZE - existing_len))
     {
       PanicAlertFmt("FIFO out of bounds (existing {} + new {} > {})", existing_len, len, FIFO_SIZE);
-      return;
+      return 0;
     }
     memmove(s_video_buffer, s_video_buffer_read_ptr, existing_len);
-    s_video_buffer_write_ptr = s_video_buffer + existing_len;
+    write_ptr = s_video_buffer + existing_len;
     s_video_buffer_read_ptr = s_video_buffer;
   }
   // Copy new video instructions to s_video_buffer for future use in rendering the new picture
-  Memory::CopyFromEmu(s_video_buffer_write_ptr, readPtr, len);
-  s_video_buffer_write_ptr += len;
+  Memory::CopyFromEmu(write_ptr, readPtr, len);
+  s_video_buffer_write_ptr = write_ptr + len;
+  return len;
 }
 
 // The deterministic_gpu_thread version.
-static void ReadDataFromFifoOnCPU(u32 readPtr)
+static u32 ReadDataFromFifoOnCPU(u32 readPtr)
 {
-  constexpr size_t len = 32;
+  constexpr u32 len = 32;
   u8* write_ptr = s_video_buffer_write_ptr;
   if (len > static_cast<size_t>(s_video_buffer + FIFO_SIZE - write_ptr))
   {
@@ -256,27 +258,28 @@ static void ReadDataFromFifoOnCPU(u32 readPtr)
     if (!s_gpu_mainloop.IsRunning())
     {
       // GPU is shutting down, so the next asserts may fail
-      return;
+      return 0;
     }
 
     if (s_video_buffer_pp_read_ptr != s_video_buffer_read_ptr)
     {
       PanicAlertFmt("Desynced read pointers");
-      return;
+      return 0;
     }
     write_ptr = s_video_buffer_write_ptr;
     const size_t existing_len = write_ptr - s_video_buffer_pp_read_ptr;
     if (len > static_cast<size_t>(FIFO_SIZE - existing_len))
     {
       PanicAlertFmt("FIFO out of bounds (existing {} + new {} > {})", existing_len, len, FIFO_SIZE);
-      return;
+      return 0;
     }
   }
-  Memory::CopyFromEmu(s_video_buffer_write_ptr, readPtr, len);
+  Memory::CopyFromEmu(write_ptr, readPtr, len);
   s_video_buffer_pp_read_ptr = OpcodeDecoder::Run<true>(
       DataReader(s_video_buffer_pp_read_ptr, write_ptr + len), nullptr, false);
   // This would have to be locked if the GPU thread didn't spin.
   s_video_buffer_write_ptr = write_ptr + len;
+  return len;
 }
 
 void ResetVideoBuffer()
@@ -325,6 +328,7 @@ void RunGpuLoop()
           CommandProcessor::SCPFifoStruct& fifo = CommandProcessor::fifo;
           CommandProcessor::SetCPStatusFromGPU();
 
+          u32 needSize = 0;
           // check if we are able to run this buffer
           while (!CommandProcessor::IsInterruptWaiting() &&
                  fifo.bFF_GPReadEnable.load(std::memory_order_relaxed) &&
@@ -333,44 +337,43 @@ void RunGpuLoop()
             if (param.bSyncGPU && s_sync_ticks.load() < param.iSyncGpuMinDistance)
               break;
 
-            u32 cyclesExecuted = 0;
             u32 readPtr = fifo.CPReadPointer.load(std::memory_order_relaxed);
-            ReadDataFromFifo(readPtr);
+            u32 readSize = ReadDataFromFifo(readPtr);
 
-            if (readPtr == fifo.CPEnd.load(std::memory_order_relaxed))
+            readPtr += readSize;
+            if (readPtr == fifo.CPEnd.load(std::memory_order_relaxed) + 32)
               readPtr = fifo.CPBase.load(std::memory_order_relaxed);
-            else
-              readPtr += 32;
-
-            ASSERT_MSG(COMMANDPROCESSOR,
-                       (s32)fifo.CPReadWriteDistance.load(std::memory_order_relaxed) - 32 >= 0,
-                       "Negative fifo.CPReadWriteDistance = %i in FIFO Loop !\nThat can produce "
-                       "instability in the game. Please report it.",
-                       fifo.CPReadWriteDistance.load(std::memory_order_relaxed) - 32);
-
-            u8* write_ptr = s_video_buffer_write_ptr;
-            s_video_buffer_read_ptr = OpcodeDecoder::Run(
-                DataReader(s_video_buffer_read_ptr, write_ptr), &cyclesExecuted, false);
 
             fifo.CPReadPointer.store(readPtr, std::memory_order_relaxed);
-            fifo.CPReadWriteDistance.fetch_sub(32, std::memory_order_seq_cst);
-            if ((write_ptr - s_video_buffer_read_ptr) == 0)
+            fifo.CPReadWriteDistance.fetch_sub((s32)readSize, std::memory_order_seq_cst);
+
+            ASSERT_MSG(COMMANDPROCESSOR,
+                       (s32)fifo.CPReadWriteDistance.load(std::memory_order_relaxed) - readSize >= 0,
+                       "Negative fifo.CPReadWriteDistance = %i in FIFO Loop !\nThat can produce "
+                       "instability in the game. Please report it.",
+                       fifo.CPReadWriteDistance.load(std::memory_order_relaxed) - readSize);
+
+            u8* write_ptr = s_video_buffer_write_ptr;
+            if (write_ptr - s_video_buffer_read_ptr > needSize)
             {
-              fifo.SafeCPReadPointer.store(fifo.CPReadPointer.load(std::memory_order_relaxed),
-                                           std::memory_order_relaxed);
+              u32 cyclesExecuted = 0;
+              needSize = 0;
+              s_video_buffer_read_ptr = OpcodeDecoder::Run(
+                      DataReader(s_video_buffer_read_ptr, write_ptr), &cyclesExecuted, false, &needSize);
+
+              if ((write_ptr - s_video_buffer_read_ptr) == 0)
+                fifo.SafeCPReadPointer.store(fifo.CPReadPointer, std::memory_order_relaxed);
+              CommandProcessor::SetCPStatusFromGPU();
+
+              if (param.bSyncGPU)
+              {
+                cyclesExecuted = (int)(cyclesExecuted / param.fSyncGpuOverclock);
+                int old = s_sync_ticks.fetch_sub(cyclesExecuted);
+                if (old >= param.iSyncGpuMaxDistance &&
+                    old - (int)cyclesExecuted < param.iSyncGpuMaxDistance)
+                  s_sync_wakeup_event.Set();
+              }
             }
-
-            CommandProcessor::SetCPStatusFromGPU();
-
-            if (param.bSyncGPU)
-            {
-              cyclesExecuted = (int)(cyclesExecuted / param.fSyncGpuOverclock);
-              int old = s_sync_ticks.fetch_sub(cyclesExecuted);
-              if (old >= param.iSyncGpuMaxDistance &&
-                  old - (int)cyclesExecuted < param.iSyncGpuMaxDistance)
-                s_sync_wakeup_event.Set();
-            }
-
             // This call is pretty important in DualCore mode and must be called in the FIFO Loop.
             // If we don't, s_swapRequested or s_efbAccessRequested won't be set to false
             // leading the CPU thread to wait in Video_OutputXFB or Video_AccessEFB thus slowing
@@ -444,16 +447,16 @@ void RunGpu()
 
 static int RunGpuOnCpu(int ticks)
 {
-  CommandProcessor::SCPFifoStruct& fifo = CommandProcessor::fifo;
   bool reset_simd_state = false;
+  u32 need_size = 0;
   int available_ticks = int(ticks * SConfig::GetInstance().fSyncGpuOverclock) + s_sync_ticks.load();
-  while (fifo.bFF_GPReadEnable.load(std::memory_order_relaxed) &&
-         fifo.CPReadWriteDistance.load(std::memory_order_relaxed) && !AtBreakpoint() &&
-         available_ticks >= 0)
+  CommandProcessor::SCPFifoStruct& fifo = CommandProcessor::fifo;
+  while (fifo.bFF_GPReadEnable && fifo.CPReadWriteDistance && !AtBreakpoint() && available_ticks >= 0)
   {
+    u32 read_size;
     if (s_use_deterministic_gpu_thread)
     {
-      ReadDataFromFifoOnCPU(fifo.CPReadPointer.load(std::memory_order_relaxed));
+      read_size = ReadDataFromFifoOnCPU(fifo.CPReadPointer.load(std::memory_order_relaxed));
       s_gpu_mainloop.Wakeup();
     }
     else
@@ -464,25 +467,27 @@ static int RunGpuOnCpu(int ticks)
         FPURoundMode::LoadDefaultSIMDState();
         reset_simd_state = true;
       }
-      ReadDataFromFifo(fifo.CPReadPointer.load(std::memory_order_relaxed));
-      u32 cycles = 0;
-      s_video_buffer_read_ptr = OpcodeDecoder::Run(
-          DataReader(s_video_buffer_read_ptr, s_video_buffer_write_ptr), &cycles, false);
-      available_ticks -= cycles;
+      read_size = ReadDataFromFifo(fifo.CPReadPointer.load(std::memory_order_relaxed));
+      u8* write_ptr = s_video_buffer_write_ptr;
+      if (write_ptr - s_video_buffer_read_ptr > need_size)
+      {
+        u32 cycles = 0;
+        need_size = 0;
+        s_video_buffer_read_ptr = OpcodeDecoder::Run(
+                DataReader(s_video_buffer_read_ptr, write_ptr), &cycles, false, &need_size);
+        available_ticks -= cycles;
+      }
     }
 
+    fifo.CPReadPointer += read_size;
     if (fifo.CPReadPointer.load(std::memory_order_relaxed) ==
-        fifo.CPEnd.load(std::memory_order_relaxed))
+        fifo.CPEnd.load(std::memory_order_relaxed) + 32)
     {
       fifo.CPReadPointer.store(fifo.CPBase.load(std::memory_order_relaxed),
                                std::memory_order_relaxed);
     }
-    else
-    {
-      fifo.CPReadPointer.fetch_add(32, std::memory_order_relaxed);
-    }
 
-    fifo.CPReadWriteDistance.fetch_sub(32, std::memory_order_relaxed);
+    fifo.CPReadWriteDistance.fetch_sub(read_size, std::memory_order_relaxed);
   }
 
   CommandProcessor::SetCPStatusFromGPU();

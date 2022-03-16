@@ -927,10 +927,16 @@ void UpdateTitle(u32 ElapseTime)
 
   std::string S_FPS;
 
-  if (g_ActiveConfig.bShowFPS)
+  if (g_ActiveConfig.bShowFPS && !g_ActiveConfig.bShowActiveTitle)
   {
     S_FPS = fmt::format("FPS: {:.0f} - VPS: {:.0f} - {:.0f}%",
                         perf_stats.FPS, perf_stats.VPS, perf_stats.Speed);
+  }
+  else if (g_ActiveConfig.bShowActiveTitle)
+  {
+    S_FPS = fmt::format("FPS: {:.0f} - VPS: {:.0f} - {:.0f}% | {}",
+                        perf_stats.FPS, perf_stats.VPS, perf_stats.Speed,
+                        SConfig::GetInstance().GetTitleDescription());
   }
 
   // Update the audio timestretcher with the current speed

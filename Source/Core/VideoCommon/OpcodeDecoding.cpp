@@ -78,15 +78,20 @@ void Init()
 }
 
 template <bool is_preprocess>
-u8* Run(DataReader src, u32* cycles, bool in_display_list)
+u8* Run(DataReader src, u32* cycles, bool in_display_list, u32* need_size)
 {
   u32 total_cycles = 0;
+  u32 needSize = 0;
   u8* opcode_start = nullptr;
 
-  const auto finish_up = [cycles, &opcode_start, &total_cycles] {
+  const auto finish_up = [cycles, &opcode_start, &total_cycles, &need_size, &needSize] {
     if (cycles != nullptr)
     {
       *cycles = total_cycles;
+    }
+    if (need_size)
+    {
+      *need_size = needSize;
     }
     return opcode_start;
   };
@@ -96,9 +101,12 @@ u8* Run(DataReader src, u32* cycles, bool in_display_list)
     opcode_start = src.GetPointer();
 
     if (!src.size())
+    {
+      needSize = 1;
       return finish_up();
+    }
 
-    const u8 cmd_byte = src.Read<u8>();
+    const u8 cmd_byte = *opcode_start; src.Skip();
     switch (cmd_byte)
     {
     case GX_NOP:
@@ -113,7 +121,10 @@ u8* Run(DataReader src, u32* cycles, bool in_display_list)
     case GX_LOAD_CP_REG:
     {
       if (src.size() < 1 + 4)
+      {
+        needSize = 5;
         return finish_up();
+      }
 
       total_cycles += 12;
 
@@ -128,12 +139,18 @@ u8* Run(DataReader src, u32* cycles, bool in_display_list)
     case GX_LOAD_XF_REG:
     {
       if (src.size() < 4)
+      {
+        needSize = 4;
         return finish_up();
+      }
 
       const u32 cmd2 = src.Read<u32>();
       const u32 transfer_size = ((cmd2 >> 16) & 15) + 1;
       if (src.size() < transfer_size * sizeof(u32))
+      {
+        needSize = transfer_size * sizeof(u32);
         return finish_up();
+      }
 
       total_cycles += 18 + 6 * transfer_size;
 
@@ -154,7 +171,10 @@ u8* Run(DataReader src, u32* cycles, bool in_display_list)
     case GX_LOAD_INDX_D:  // Used for lights
     {
       if (src.size() < 4)
+      {
+        needSize = 4;
         return finish_up();
+      }
 
       total_cycles += 6;
 
@@ -175,7 +195,10 @@ u8* Run(DataReader src, u32* cycles, bool in_display_list)
     case GX_CMD_CALL_DL:
     {
       if (src.size() < 8)
+      {
+        needSize = 8;
         return finish_up();
+      }
 
       const u32 address = src.Read<u32>();
       const u32 count = src.Read<u32>();
@@ -211,7 +234,10 @@ u8* Run(DataReader src, u32* cycles, bool in_display_list)
       // tokens and stuff.  TODO: Call a much simplified LoadBPReg instead.
       {
         if (src.size() < 4)
+        {
+          needSize = 4;
           return finish_up();
+        }
 
         total_cycles += 12;
 
@@ -234,24 +260,27 @@ u8* Run(DataReader src, u32* cycles, bool in_display_list)
       {
         // load vertices
         if (src.size() < 2)
+        {
+          needSize = 2;
           return finish_up();
+        }
 
         const u16 num_vertices = src.Read<u16>();
         if(num_vertices > 0)
         {
-          int bytes;
+          int vtx_attr_group = cmd_byte & GX_VAT_MASK;  // Vertex loader index (0 - 7)
+          int primitive = (cmd_byte & GX_PRIMITIVE_MASK) >> GX_PRIMITIVE_SHIFT;
+          int bytes =
+                  VertexLoaderManager::GetVertexSize(vtx_attr_group, is_preprocess) * num_vertices;
 
-          if(is_preprocess)
-            bytes = VertexLoaderManager::RunVerticesPreprocess(
-                    cmd_byte & GX_VAT_MASK,  // Vertex loader index (0 - 7)
-                    (cmd_byte & GX_PRIMITIVE_MASK) >> GX_PRIMITIVE_SHIFT, num_vertices, src);
-          else
-            bytes = VertexLoaderManager::RunVertices(
-                    cmd_byte & GX_VAT_MASK,  // Vertex loader index (0 - 7)
-                    (cmd_byte & GX_PRIMITIVE_MASK) >> GX_PRIMITIVE_SHIFT, num_vertices, src);
-
-          if (bytes < 0)
+          if (src.size() < bytes)
+          {
+            needSize = bytes;
             return finish_up();
+          }
+
+          if(!is_preprocess)
+            VertexLoaderManager::RunVertices(vtx_attr_group, primitive, num_vertices, src);
 
           src.Skip(bytes);
 
@@ -273,7 +302,7 @@ u8* Run(DataReader src, u32* cycles, bool in_display_list)
   }
 }
 
-template u8* Run<true>(DataReader src, u32* cycles, bool in_display_list);
-template u8* Run<false>(DataReader src, u32* cycles, bool in_display_list);
+template u8* Run<true>(DataReader src, u32* cycles, bool in_display_list, u32* need_size);
+template u8* Run<false>(DataReader src, u32* cycles, bool in_display_list, u32* need_size);
 
 }  // namespace OpcodeDecoder

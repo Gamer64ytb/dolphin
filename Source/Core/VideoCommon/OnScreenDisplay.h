@@ -36,6 +36,7 @@ enum class MessageType
   BoundingBoxNotice,
   EFBScale,
   LogicOpsNotice,
+  IplNotice,
 };
 
 namespace Color
