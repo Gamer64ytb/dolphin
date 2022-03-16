@@ -447,11 +447,12 @@ void RunGpu()
 
 static int RunGpuOnCpu(int ticks)
 {
+  CommandProcessor::SCPFifoStruct& fifo = CommandProcessor::fifo;
   bool reset_simd_state = false;
   u32 need_size = 0;
   int available_ticks = int(ticks * SConfig::GetInstance().fSyncGpuOverclock) + s_sync_ticks.load();
-  CommandProcessor::SCPFifoStruct& fifo = CommandProcessor::fifo;
-  while (fifo.bFF_GPReadEnable && fifo.CPReadWriteDistance && !AtBreakpoint() && available_ticks >= 0)
+  while (fifo.bFF_GPReadEnable && fifo.CPReadWriteDistance && !AtBreakpoint() &&
+         available_ticks >= 0)
   {
     u32 read_size;
     if (s_use_deterministic_gpu_thread)
