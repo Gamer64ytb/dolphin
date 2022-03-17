@@ -167,18 +167,6 @@ u16* AddPoints(u16* index_ptr, u32 num_verts, u32 index)
 }
 }  // Anonymous namespace
 
-void IndexGenerator::Init()
-{
-  m_primitive_table[OpcodeDecoder::GX_DRAW_QUADS] = AddQuads;
-  m_primitive_table[OpcodeDecoder::GX_DRAW_QUADS_2] = AddQuads_nonstandard;
-  m_primitive_table[OpcodeDecoder::GX_DRAW_TRIANGLES] = AddList;
-  m_primitive_table[OpcodeDecoder::GX_DRAW_TRIANGLE_STRIP] = AddStrip;
-  m_primitive_table[OpcodeDecoder::GX_DRAW_TRIANGLE_FAN] = AddFan;
-  m_primitive_table[OpcodeDecoder::GX_DRAW_LINES] = AddLineList;
-  m_primitive_table[OpcodeDecoder::GX_DRAW_LINE_STRIP] = AddLineStrip;
-  m_primitive_table[OpcodeDecoder::GX_DRAW_POINTS] = AddPoints;
-}
-
 void IndexGenerator::Start(u16* index_ptr)
 {
   m_index_buffer_current = index_ptr;
@@ -188,8 +176,33 @@ void IndexGenerator::Start(u16* index_ptr)
 
 void IndexGenerator::AddIndices(int primitive, u32 num_vertices)
 {
-  m_index_buffer_current =
-      m_primitive_table[primitive](m_index_buffer_current, num_vertices, m_base_index);
+  switch (primitive)
+  {
+    case OpcodeDecoder::GX_DRAW_QUADS:
+      m_index_buffer_current = AddQuads(m_index_buffer_current, num_vertices, m_base_index);
+          break;
+    case OpcodeDecoder::GX_DRAW_QUADS_2:
+      m_index_buffer_current = AddQuads_nonstandard(m_index_buffer_current, num_vertices, m_base_index);
+          break;
+    case OpcodeDecoder::GX_DRAW_TRIANGLES:
+      m_index_buffer_current = AddList(m_index_buffer_current, num_vertices, m_base_index);
+          break;
+    case OpcodeDecoder::GX_DRAW_TRIANGLE_STRIP:
+      m_index_buffer_current = AddStrip(m_index_buffer_current, num_vertices, m_base_index);
+          break;
+    case OpcodeDecoder::GX_DRAW_TRIANGLE_FAN:
+      m_index_buffer_current = AddFan(m_index_buffer_current, num_vertices, m_base_index);
+          break;
+    case OpcodeDecoder::GX_DRAW_LINES:
+      m_index_buffer_current = AddLineList(m_index_buffer_current, num_vertices, m_base_index);
+          break;
+    case OpcodeDecoder::GX_DRAW_LINE_STRIP:
+      m_index_buffer_current = AddLineStrip(m_index_buffer_current, num_vertices, m_base_index);
+          break;
+    case OpcodeDecoder::GX_DRAW_POINTS:
+      m_index_buffer_current = AddPoints(m_index_buffer_current, num_vertices, m_base_index);
+          break;
+  }
   m_base_index += num_vertices;
 }
 

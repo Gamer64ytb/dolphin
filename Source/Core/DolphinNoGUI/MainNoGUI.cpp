@@ -224,7 +224,7 @@ int main(int argc, char* argv[])
   UICommon::Init();
 
   s_platform = GetPlatform(options);
-  if (!s_platform || !s_platform->Init())
+  if (!s_platform)
   {
     fprintf(stderr, "No platform found, or failed to initialize.\n");
     return 1;

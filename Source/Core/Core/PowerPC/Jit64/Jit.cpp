@@ -350,7 +350,6 @@ void Jit64::Init()
   AddChildCodeSpace(&asm_routines, routines_size);
   AddChildCodeSpace(&trampolines, trampolines_size);
   AddChildCodeSpace(&m_far_code, farcode_size);
-  m_const_pool.Init(AllocChildCodeSpace(constpool_size), constpool_size);
   ResetCodePtr();
 
   // BLR optimization has the same consequences as block linking, as well as
@@ -363,13 +362,9 @@ void Jit64::Init()
   if (m_enable_blr_optimization)
     AllocStack();
 
-  blocks.Init();
-  asm_routines.Init(m_stack ? (m_stack + STACK_SIZE) : nullptr);
-
   // important: do this *after* generating the global asm routines, because we can't use farcode in
   // them.
   // it'll crash because the farcode functions get cleared on JIT clears.
-  m_far_code.Init();
   Clear();
 
   code_block.m_stats = &js.st;

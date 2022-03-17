@@ -12,7 +12,6 @@
 class IndexGenerator
 {
 public:
-  void Init();
   void Start(u16* index_ptr);
 
   void AddIndices(int primitive, u32 num_vertices);

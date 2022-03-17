@@ -87,7 +87,6 @@ VertexManagerBase::~VertexManagerBase() = default;
 
 bool VertexManagerBase::Initialize()
 {
-  m_index_generator.Init();
   return true;
 }
 

@@ -25,7 +25,6 @@ Jit64AsmRoutineManager::Jit64AsmRoutineManager(Jit64& jit) : CommonAsmRoutines(j
 
 void Jit64AsmRoutineManager::Init(u8* stack_top)
 {
-  m_const_pool.Init(AllocChildCodeSpace(4096), 4096);
   m_stack_top = stack_top;
   Generate();
   WriteProtect();
