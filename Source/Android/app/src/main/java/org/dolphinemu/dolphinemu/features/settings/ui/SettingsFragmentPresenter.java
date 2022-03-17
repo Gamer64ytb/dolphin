@@ -4,6 +4,7 @@ package org.dolphinemu.dolphinemu.features.settings.ui;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 
@@ -274,6 +275,13 @@ public final class SettingsFragmentPresenter
       sl.add(new SingleChoiceSetting(mContext, IntSetting.MAIN_EMULATION_ORIENTATION,
               R.string.emulation_screen_orientation, 0, R.array.orientationEntries,
               R.array.orientationValues));
+    }
+
+    // only android 9+ support this feature.
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
+    {
+      sl.add(new CheckBoxSetting(mContext, BooleanSetting.MAIN_IGNORE_NOTCH,
+              R.string.ignore_notch, R.string.ignore_notch_description));
     }
 
     sl.add(new CheckBoxSetting(mContext, BooleanSetting.MAIN_USE_PANIC_HANDLERS,

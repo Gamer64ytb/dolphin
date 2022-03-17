@@ -35,6 +35,7 @@ public enum BooleanSetting implements AbstractBooleanSetting
 
   MAIN_DSP_JIT(Settings.FILE_DOLPHIN, Settings.SECTION_INI_DSP, "EnableJIT", true),
 
+  MAIN_IGNORE_NOTCH(Settings.FILE_DOLPHIN, Settings.SECTION_INI_INTERFACE, "IgnoreNotch", false),
   MAIN_USE_PANIC_HANDLERS(Settings.FILE_DOLPHIN, Settings.SECTION_INI_INTERFACE,
           "UsePanicHandlers", true),
   MAIN_OSD_MESSAGES(Settings.FILE_DOLPHIN, Settings.SECTION_INI_INTERFACE,
