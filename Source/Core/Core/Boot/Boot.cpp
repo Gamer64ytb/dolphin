@@ -19,6 +19,7 @@ namespace fs = std::filesystem;
 #include <unordered_set>
 #include <utility>
 #include <vector>
+
 #include <VideoCommon/OnScreenDisplay.h>
 
 #include "Common/Align.h"
@@ -402,7 +403,7 @@ bool CBoot::Load_BS2(const std::string& boot_rom_filename)
     known_ipl = true;
     break;
   default:
-    OSD::AddTypedMessage(OSD::MessageType::IplNotice, "The IPL file is not a known good dump.", 4000);
+    OSD::AddMessage(fmt::format("The IPL file is not a known good dump. (CRC32: {0:x})", ipl_hash), 4000);
     break;
   }
 
