@@ -6,6 +6,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -22,6 +23,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.nononsenseapps.filepicker.DividerItemDecoration;
+
 import org.dolphinemu.dolphinemu.R;
 import org.dolphinemu.dolphinemu.activities.EmulationActivity;
 import org.dolphinemu.dolphinemu.adapters.GameAdapter;
@@ -34,7 +37,6 @@ import org.dolphinemu.dolphinemu.features.sysupdate.ui.SystemMenuNotInstalledDia
 import org.dolphinemu.dolphinemu.features.sysupdate.ui.SystemUpdateViewModel;
 import org.dolphinemu.dolphinemu.model.GameFileCache;
 import org.dolphinemu.dolphinemu.services.GameFileCacheManager;
-import org.dolphinemu.dolphinemu.ui.DividerItemDecoration;
 import org.dolphinemu.dolphinemu.utils.AfterDirectoryInitializationRunner;
 import org.dolphinemu.dolphinemu.utils.BooleanSupplier;
 import org.dolphinemu.dolphinemu.utils.CompletableFuture;
@@ -236,7 +238,8 @@ public final class MainActivity extends AppCompatActivity
   {
     mToolbar = findViewById(R.id.toolbar_main);
     SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-    mDivider = new DividerItemDecoration(this, null);
+    Drawable lineDivider = getDrawable(R.drawable.line_divider);
+    mDivider = new DividerItemDecoration(lineDivider);
     mGameList = findViewById(R.id.grid_games);
     mAdapter = new GameAdapter();
     mGameList.setAdapter(mAdapter);

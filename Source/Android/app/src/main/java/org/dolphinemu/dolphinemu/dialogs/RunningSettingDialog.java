@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Debug;
 import android.os.Handler;
@@ -22,12 +23,13 @@ import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.nononsenseapps.filepicker.DividerItemDecoration;
+
 import org.dolphinemu.dolphinemu.NativeLibrary;
 import org.dolphinemu.dolphinemu.R;
 import org.dolphinemu.dolphinemu.activities.EmulationActivity;
 import org.dolphinemu.dolphinemu.features.settings.ui.MenuTag;
 import org.dolphinemu.dolphinemu.features.settings.ui.SettingsActivity;
-import org.dolphinemu.dolphinemu.ui.DividerItemDecoration;
 
 import java.util.ArrayList;
 
@@ -718,12 +720,13 @@ public class RunningSettingDialog extends DialogFragment
     });
 
     int columns = 1;
+    Drawable lineDivider = getContext().getDrawable(R.drawable.line_divider);
     RecyclerView recyclerView = contents.findViewById(R.id.list_settings);
     RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), columns);
     recyclerView.setLayoutManager(layoutManager);
     mAdapter = new SettingsAdapter();
     recyclerView.setAdapter(mAdapter);
-    recyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), null));
+    recyclerView.addItemDecoration(new DividerItemDecoration(lineDivider));
     builder.setView(contents);
     loadSubMenu(MENU_MAIN);
     return builder.create();

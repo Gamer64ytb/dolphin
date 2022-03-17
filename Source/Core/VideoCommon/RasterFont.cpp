@@ -304,14 +304,14 @@ void RasterFont::Draw(const std::string& text, float start_x, float start_y, u32
   float screen_height = g_renderer->GetBackbufferHeight();
   float scale = g_renderer->GetBackbufferScale();
 
-  scale *= g_ActiveConfig.fFontScale;
+  scale *= g_ActiveConfig.fFontScale; // font size
 
   std::vector<float> vertices(text.length() * 6 * 4);
   u32 usage = 0;
   float delta_x = scale * CHARACTER_WIDTH / screen_width;
   float delta_y = scale * CHARACTER_HEIGHT / screen_height;
-  float border_x = scale * 2.0f / screen_width;
-  float border_y = scale * 4.0f / screen_height;
+  float border_x = 2.0f / screen_width;
+  float border_y = 4.0f / screen_height;
   float x = scale * start_x * 2.0f / screen_width - 1.0f;
   float y = 1.0f - scale * start_y * 1.50f / screen_height;
 

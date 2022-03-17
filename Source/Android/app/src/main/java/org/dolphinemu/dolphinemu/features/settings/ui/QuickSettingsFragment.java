@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -17,6 +18,8 @@ import android.view.ViewGroup;
 import android.view.LayoutInflater;
 import android.widget.Toast;
 
+import com.nononsenseapps.filepicker.DividerItemDecoration;
+
 import org.dolphinemu.dolphinemu.R;
 import org.dolphinemu.dolphinemu.activities.EmulationActivity;
 import org.dolphinemu.dolphinemu.features.settings.model.Settings;
@@ -27,7 +30,6 @@ import org.dolphinemu.dolphinemu.features.settings.model.IntSetting;
 import org.dolphinemu.dolphinemu.features.settings.model.view.CheckBoxSetting;
 import org.dolphinemu.dolphinemu.features.settings.model.view.InvertedCheckBoxSetting;
 import org.dolphinemu.dolphinemu.features.settings.model.view.SettingsItem;
-import org.dolphinemu.dolphinemu.ui.DividerItemDecoration;
 
 public class QuickSettingsFragment extends Fragment implements SettingsFragmentView
 {
@@ -76,7 +78,8 @@ public class QuickSettingsFragment extends Fragment implements SettingsFragmentV
     RecyclerView recyclerView = view.findViewById(R.id.list_quick_settings);
     recyclerView.setAdapter(mAdapter);
 
-    recyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(), null));
+    Drawable lineDivider = getContext().getDrawable(R.drawable.line_divider);
+    recyclerView.addItemDecoration(new DividerItemDecoration(lineDivider));
 
     loadSettingsList();
     showSettingsList(mSettingsList);

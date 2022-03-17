@@ -2,6 +2,7 @@
 
 package org.dolphinemu.dolphinemu.features.cheats.ui;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,9 +15,10 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.nononsenseapps.filepicker.DividerItemDecoration;
+
 import org.dolphinemu.dolphinemu.R;
 import org.dolphinemu.dolphinemu.features.cheats.model.CheatsViewModel;
-import org.dolphinemu.dolphinemu.ui.DividerItemDecoration;
 
 public class CheatListFragment extends Fragment
 {
@@ -36,8 +38,10 @@ public class CheatListFragment extends Fragment
     CheatsActivity activity = (CheatsActivity) requireActivity();
     CheatsViewModel viewModel = new ViewModelProvider(activity).get(CheatsViewModel.class);
 
+    Drawable lineDivider = getContext().getDrawable(R.drawable.line_divider);
+
     recyclerView.setAdapter(new CheatsAdapter(activity, viewModel));
     recyclerView.setLayoutManager(new LinearLayoutManager(activity));
-    recyclerView.addItemDecoration(new DividerItemDecoration(activity, null));
+    recyclerView.addItemDecoration(new DividerItemDecoration(lineDivider));
   }
 }

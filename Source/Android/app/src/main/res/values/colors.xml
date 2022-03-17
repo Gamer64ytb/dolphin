@@ -14,7 +14,7 @@
     <color name="invalid_setting_overlay">#36ff0000</color>
 
     <color name="divider">#1f000000</color>
-
+    <color name="light_grey">#e6e6e6</color>
     <color name="arrow">#42000000</color>
 
 </resources>
