@@ -28,6 +28,7 @@ import com.nononsenseapps.filepicker.DividerItemDecoration;
 import org.dolphinemu.dolphinemu.NativeLibrary;
 import org.dolphinemu.dolphinemu.R;
 import org.dolphinemu.dolphinemu.activities.EmulationActivity;
+import org.dolphinemu.dolphinemu.features.settings.model.BooleanSetting;
 import org.dolphinemu.dolphinemu.features.settings.ui.MenuTag;
 import org.dolphinemu.dolphinemu.features.settings.ui.SettingsActivity;
 
@@ -496,14 +497,19 @@ public class RunningSettingDialog extends DialogFragment
       mSettings.add(new SettingsItem(SettingsItem.SETTING_TAKE_SCREENSHOT,
               R.string.emulation_screenshot,
               SettingsItem.TYPE_BUTTON, 0));
-      mSettings.add(new SettingsItem(SettingsItem.SETTING_QUICK_SAVE, R.string.emulation_quicksave,
-              SettingsItem.TYPE_BUTTON, 0));
-      mSettings.add(new SettingsItem(SettingsItem.SETTING_QUICK_LOAD, R.string.emulation_quickload,
-              SettingsItem.TYPE_BUTTON, 0));
-      mSettings.add(new SettingsItem(SettingsItem.SETTING_LOAD_SUBMENU,
-              R.string.emulation_savestate, SettingsItem.TYPE_BUTTON, MENU_SAVE_STATE));
-      mSettings.add(new SettingsItem(SettingsItem.SETTING_LOAD_SUBMENU,
-              R.string.emulation_loadstate, SettingsItem.TYPE_BUTTON, MENU_LOAD_STATE));
+      if (BooleanSetting.MAIN_ENABLE_SAVESTATES.getBooleanGlobal())
+      {
+        mSettings
+                .add(new SettingsItem(SettingsItem.SETTING_QUICK_SAVE, R.string.emulation_quicksave,
+                        SettingsItem.TYPE_BUTTON, 0));
+        mSettings
+                .add(new SettingsItem(SettingsItem.SETTING_QUICK_LOAD, R.string.emulation_quickload,
+                        SettingsItem.TYPE_BUTTON, 0));
+        mSettings.add(new SettingsItem(SettingsItem.SETTING_LOAD_SUBMENU,
+                R.string.emulation_savestate, SettingsItem.TYPE_BUTTON, MENU_SAVE_STATE));
+        mSettings.add(new SettingsItem(SettingsItem.SETTING_LOAD_SUBMENU,
+                R.string.emulation_loadstate, SettingsItem.TYPE_BUTTON, MENU_LOAD_STATE));
+      }
       mSettings.add(new SettingsItem(SettingsItem.SETTING_CHANGE_DISC,
               R.string.emulation_change_disc,
               SettingsItem.TYPE_BUTTON, 0));

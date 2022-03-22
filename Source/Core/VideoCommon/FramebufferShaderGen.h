@@ -12,7 +12,6 @@ enum class TextureFormat;
 namespace FramebufferShaderGen
 {
 std::string GenerateScreenQuadVertexShader();
-std::string GeneratePassthroughGeometryShader(u32 num_tex, u32 num_colors);
 std::string GenerateTextureCopyVertexShader();
 std::string GenerateTextureCopyPixelShader();
 std::string GenerateResolveDepthPixelShader(u32 samples);
