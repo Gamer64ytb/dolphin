@@ -86,13 +86,9 @@ u8* Run(DataReader src, u32* cycles, bool in_display_list, u32* need_size)
 
   const auto finish_up = [cycles, &opcode_start, &total_cycles, &need_size, &needSize] {
     if (cycles != nullptr)
-    {
       *cycles = total_cycles;
-    }
     if (need_size)
-    {
       *need_size = needSize;
-    }
     return opcode_start;
   };
 
@@ -101,10 +97,7 @@ u8* Run(DataReader src, u32* cycles, bool in_display_list, u32* need_size)
     opcode_start = src.GetPointer();
 
     if (!src.size())
-    {
-      needSize = 1;
       return finish_up();
-    }
 
     const u8 cmd_byte = *opcode_start; src.Skip();
     switch (cmd_byte)
@@ -121,10 +114,7 @@ u8* Run(DataReader src, u32* cycles, bool in_display_list, u32* need_size)
     case GX_LOAD_CP_REG:
     {
       if (src.size() < 1 + 4)
-      {
-        needSize = 5;
         return finish_up();
-      }
 
       total_cycles += 12;
 
@@ -139,10 +129,7 @@ u8* Run(DataReader src, u32* cycles, bool in_display_list, u32* need_size)
     case GX_LOAD_XF_REG:
     {
       if (src.size() < 4)
-      {
-        needSize = 4;
         return finish_up();
-      }
 
       const u32 cmd2 = src.Read<u32>();
       const u32 transfer_size = ((cmd2 >> 16) & 15) + 1;
@@ -171,10 +158,7 @@ u8* Run(DataReader src, u32* cycles, bool in_display_list, u32* need_size)
     case GX_LOAD_INDX_D:  // Used for lights
     {
       if (src.size() < 4)
-      {
-        needSize = 4;
         return finish_up();
-      }
 
       total_cycles += 6;
 
@@ -195,10 +179,7 @@ u8* Run(DataReader src, u32* cycles, bool in_display_list, u32* need_size)
     case GX_CMD_CALL_DL:
     {
       if (src.size() < 8)
-      {
-        needSize = 8;
         return finish_up();
-      }
 
       const u32 address = src.Read<u32>();
       const u32 count = src.Read<u32>();
@@ -234,10 +215,7 @@ u8* Run(DataReader src, u32* cycles, bool in_display_list, u32* need_size)
       // tokens and stuff.  TODO: Call a much simplified LoadBPReg instead.
       {
         if (src.size() < 4)
-        {
-          needSize = 4;
           return finish_up();
-        }
 
         total_cycles += 12;
 
@@ -260,10 +238,7 @@ u8* Run(DataReader src, u32* cycles, bool in_display_list, u32* need_size)
       {
         // load vertices
         if (src.size() < 2)
-        {
-          needSize = 2;
           return finish_up();
-        }
 
         const u16 num_vertices = src.Read<u16>();
         if(num_vertices > 0)

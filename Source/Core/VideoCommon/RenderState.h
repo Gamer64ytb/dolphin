@@ -108,7 +108,7 @@ union BlendingState
 
   bool IsDualSourceBlend() const
   {
-    return dstalpha && (srcfactor == SrcBlendFactor::SrcAlpha || dstfactor == DstBlendFactor::InvSrcAlpha);
+    return dstalpha && (srcfactor == SrcBlendFactor::SrcAlpha || srcfactor == SrcBlendFactor::InvSrcAlpha);
   }
 
   // HACK: Replaces logical operations with blend operations.

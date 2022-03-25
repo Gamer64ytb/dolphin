@@ -668,6 +668,8 @@ public final class SettingsFragmentPresenter
             R.string.disable_copy_filter, R.string.disable_copy_filter_description));
     sl.add(new CheckBoxSetting(mContext, BooleanSetting.GFX_ENHANCE_ARBITRARY_MIPMAP_DETECTION,
             R.string.arbitrary_mipmap_detection, R.string.arbitrary_mipmap_detection_description));
+    sl.add(new CheckBoxSetting(mContext, BooleanSetting.GFX_ENHANCE_SKIP_APPROXIMATE_LOGIC_OP,
+            R.string.skip_approximate_logic_op, R.string.skip_approximate_logic_op_description));
     sl.add(new CheckBoxSetting(mContext, BooleanSetting.GFX_WIDESCREEN_HACK,
             R.string.wide_screen_hack, R.string.wide_screen_hack_description));
   }

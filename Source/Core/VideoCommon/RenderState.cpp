@@ -7,6 +7,7 @@
 #include <array>
 
 #include "VideoCommon/TextureConfig.h"
+#include "VideoConfig.h"
 
 void RasterizationState::Generate(const BPMemory& bp, PrimitiveType primitive_type)
 {
@@ -169,6 +170,11 @@ void BlendingState::Generate(const BPMemory& bp)
 
 void BlendingState::ApproximateLogicOpWithBlending()
 {
+  if (g_ActiveConfig.bSkipApproximateLogicOp)
+  {
+    return;
+  }
+  
   struct LogicOpApproximation
   {
     bool subtract;

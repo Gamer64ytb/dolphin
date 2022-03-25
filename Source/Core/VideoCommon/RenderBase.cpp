@@ -960,12 +960,11 @@ void Renderer::Swap(u32 xfb_addr, u32 fb_width, u32 fb_stride, u32 fb_height, u6
       // Since we use the common pipelines here and draw vertices if a batch is currently being
       // built by the vertex loader, we end up trampling over its pointer, as we share the buffer
       // with the loader, and it has not been unmapped yet. Force a pipeline flush to avoid this.
-      g_vertex_manager->Flush();
-
-      // Render the XFB to the screen.
       BeginUtilityDrawing();
+
       if (!IsHeadless())
       {
+        // Render the XFB to the screen.
         BindBackbuffer({{0.0f, 0.0f, 0.0f, 1.0f}});
 
         if (!is_duplicate_frame)

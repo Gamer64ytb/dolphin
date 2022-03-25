@@ -183,7 +183,13 @@ PixelShaderUid GetPixelShaderUid()
   uid_data->rgba6_format =
       bpmem.zcontrol.pixel_format == PixelFormat::RGBA6_Z24 && !g_ActiveConfig.bForceTrueColor;
   uid_data->dither = bpmem.blendmode.dither && uid_data->rgba6_format;
-  uid_data->uint_output = bpmem.blendmode.UseLogicOp();
+
+  // OpenGL and Vulkan convert implicitly normalized color outputs to their uint representation.
+  // Therefore, it is not necessary to use a uint output on these backends. We also disable the
+  // uint output when logic op is not supported (i.e. driver/device does not support D3D11.1).
+  if (g_ActiveConfig.backend_info.api_type == APIType::D3D &&
+      g_ActiveConfig.backend_info.bSupportsLogicOp)
+    uid_data->uint_output = bpmem.blendmode.UseLogicOp();
 
   u32 numStages = uid_data->genMode_numtevstages + 1;
 
@@ -292,7 +298,7 @@ PixelShaderUid GetPixelShaderUid()
   }
   else
   {
-    uid_data->forced_early_z = 1;
+    uid_data->forced_early_z = true;
   }
 
   // NOTE: Fragment may not be discarded if alpha test always fails and early depth test is enabled
@@ -324,16 +330,38 @@ PixelShaderUid GetPixelShaderUid()
   BlendingState state = {};
   state.Generate(bpmem);
 
-  if (state.IsDualSourceBlend() && !g_ActiveConfig.backend_info.bSupportsDualSourceBlend &&
-      (g_ActiveConfig.backend_info.bSupportsFramebufferFetch))
+  uid_data->useDstAlpha = bpmem.dstalpha.enable && bpmem.blendmode.alphaupdate &&
+   bpmem.zcontrol.pixel_format == PixelFormat::RGBA6_Z24;
+
+  if (state.logicopenable && state.logicmode != LogicOp::Copy &&
+      !g_ActiveConfig.backend_info.bSupportsLogicOp)
   {
-    uid_data->blend_enable = state.blendenable;
-    uid_data->blend_src_factor = state.srcfactor;
-    uid_data->blend_src_factor_alpha = state.srcfactoralpha;
-    uid_data->blend_dst_factor = state.dstfactor;
-    uid_data->blend_dst_factor_alpha = state.dstfactoralpha;
-    uid_data->blend_subtract = state.subtract;
-    uid_data->blend_subtract_alpha = state.subtractAlpha;
+    // shader logic ops
+    if (g_ActiveConfig.backend_info.bSupportsFramebufferFetch)
+    {
+      uid_data->logic_op_enable = state.logicopenable;
+      uid_data->logic_mode = u32(state.logicmode.Value());
+    }
+    else if(state.logicmode == LogicOp::Clear ||
+            state.logicmode == LogicOp::CopyInverted ||
+            state.logicmode == LogicOp::Set)
+    {
+      uid_data->logic_op_enable = state.logicopenable;
+      uid_data->logic_mode = u32(state.logicmode.Value());
+    }
+  }
+
+  if (state.IsDualSourceBlend())
+  {
+    if (g_ActiveConfig.backend_info.bSupportsDualSourceBlend)
+    {
+      uid_data->dualSrcBlend = true;
+    }
+    else
+    {
+      // before alpha pass
+      uid_data->useDstAlpha = false;
+    }
   }
 
   return out;
@@ -349,6 +377,37 @@ void ClearUnusedPixelShaderUidBits(APIType api_type, const ShaderHostConfig& hos
   // uint output when logic op is not supported (i.e. driver/device does not support D3D11.1).
   if (api_type != APIType::D3D || !host_config.backend_logic_op)
     uid_data->uint_output = 0;
+
+  if (!host_config.backend_dual_source_blend)
+  {
+    uid_data->dualSrcBlend = 0;
+  }
+
+  if (host_config.backend_logic_op)
+  {
+    uid_data->logic_op_enable = 0;
+    uid_data->logic_mode = 0;
+  }
+
+  if (!host_config.backend_shader_framebuffer_fetch)
+  {
+    if (uid_data->logic_mode == u32(LogicOp::Clear) ||
+        uid_data->logic_mode == u32(LogicOp::CopyInverted) ||
+        uid_data->logic_mode == u32(LogicOp::Set))
+    {
+      // handle these logic ops event backend doesn't support framebuffer fetch.
+    }
+    else
+    {
+      uid_data->logic_op_enable = 0;
+      uid_data->logic_mode = 0;
+    }
+  }
+
+  if (!g_ActiveConfig.backend_info.bSupportsEarlyZ)
+  {
+    uid_data->forced_early_z = 0;
+  }
 
   // If bounding box is enabled when a UID cache is created, then later disabled, we shouldn't
   // emit the bounding box portion of the shader.
@@ -845,6 +904,8 @@ static void WriteFog(ShaderCode& out, const pixel_shader_uid_data* uid_data);
 static void WriteColor(ShaderCode& out, APIType api_type, const pixel_shader_uid_data* uid_data,
                        bool use_dual_source);
 
+static void WriteLogicOp(ShaderCode& out, const pixel_shader_uid_data* uid_data);
+
 ShaderCode GeneratePixelShaderCode(APIType api_type, const ShaderHostConfig& host_config,
                                    const pixel_shader_uid_data* uid_data)
 {
@@ -874,7 +935,7 @@ ShaderCode GeneratePixelShaderCode(APIType api_type, const ShaderHostConfig& hos
               "sampleTexture(texmap, tex[texmap], samp[texmap], uv, layer)\n");
   }
 
-  if (uid_data->forced_early_z && g_ActiveConfig.backend_info.bSupportsEarlyZ)
+  if (uid_data->forced_early_z)
   {
     // Zcomploc (aka early_ztest) is a way to control whether depth test is done before
     // or after texturing and alpha test. PC graphics APIs used to provide no way to emulate
@@ -922,34 +983,55 @@ ShaderCode GeneratePixelShaderCode(APIType api_type, const ShaderHostConfig& hos
   }
 
   // Only use dual-source blending when required on drivers that don't support it very well.
-  const bool use_dual_source =
-    host_config.backend_dual_source_blend &&
-    (!DriverDetails::HasBug(DriverDetails::BUG_BROKEN_DUAL_SOURCE_BLENDING) ||
-      uid_data->useDstAlpha);
-  bool use_shader_blend = !use_dual_source && (uid_data->useDstAlpha);
+  bool use_dual_source = uid_data->dualSrcBlend;
+  bool use_shader_logic = uid_data->logic_op_enable;
 
   if (api_type == APIType::OpenGL || api_type == APIType::Vulkan)
   {
     if (use_dual_source)
     {
+      char const* output_location0;
+      char const* output_location1;
       if (DriverDetails::HasBug(DriverDetails::BUG_BROKEN_FRAGMENT_SHADER_INDEX_DECORATION))
       {
-        out.Write("FRAGMENT_OUTPUT_LOCATION(0) out vec4 ocol0;\n"
-                  "FRAGMENT_OUTPUT_LOCATION(1) out vec4 ocol1;\n");
+        output_location0 = "FRAGMENT_OUTPUT_LOCATION(0)";
+        output_location1 = "FRAGMENT_OUTPUT_LOCATION(1)";
       }
       else
       {
-        out.Write("FRAGMENT_OUTPUT_LOCATION_INDEXED(0, 0) out vec4 ocol0;\n"
-                  "FRAGMENT_OUTPUT_LOCATION_INDEXED(0, 1) out vec4 ocol1;\n");
+        output_location0 = "FRAGMENT_OUTPUT_LOCATION_INDEXED(0, 0)";
+        output_location1 = "FRAGMENT_OUTPUT_LOCATION_INDEXED(0, 1)";
       }
+
+      if (use_shader_logic)
+      {
+        if (host_config.backend_shader_framebuffer_fetch)
+        {
+          out.Write("{} FRAGMENT_INOUT vec4 real_ocol0;\n", output_location0);
+        }
+        else
+        {
+          out.Write("{} out vec4 real_ocol0;\n", output_location0);
+        }
+      }
+      else
+      {
+        out.Write("{} out vec4 ocol0;\n", output_location0);
+      }
+
+      // dual src output1
+      out.Write("{} out vec4 ocol1;\n", output_location1);
     }
-    else if (use_shader_blend)
+    else if (use_shader_logic)
     {
-      // QComm's Adreno driver doesn't seem to like using the framebuffer_fetch value as an
-      // intermediate value with multiple reads & modifications, so pull out the "real" output value
-      // and use a temporary for calculations, then set the output value once at the end of the
-      // shader
-      out.Write("FRAGMENT_OUTPUT_LOCATION_INDEXED(0, 0) FRAGMENT_INOUT vec4 real_ocol0;\n");
+      if (host_config.backend_shader_framebuffer_fetch)
+      {
+        out.Write("FRAGMENT_OUTPUT_LOCATION(0) FRAGMENT_INOUT vec4 real_ocol0;\n");
+      }
+      else
+      {
+        out.Write("FRAGMENT_OUTPUT_LOCATION(0) out vec4 real_ocol0;\n");
+      }
     }
     else
     {
@@ -996,12 +1078,17 @@ ShaderCode GeneratePixelShaderCode(APIType api_type, const ShaderHostConfig& hos
 
     out.Write("void main()\n{{\n");
     out.Write("\tfloat4 rawpos = gl_FragCoord;\n");
-    if (use_shader_blend)
+    if (use_shader_logic)
     {
-      // Store off a copy of the initial fb value for blending
-      out.Write("\tfloat4 initial_ocol0 = FB_FETCH_VALUE;\n"
-                "\tfloat4 ocol0;\n"
-                "\tfloat4 ocol1;\n");
+      if (host_config.backend_shader_framebuffer_fetch)
+      {
+        out.Write("\tfloat4 initial_ocol0 = FB_FETCH_VALUE;\n");
+      }
+      else
+      {
+        out.Write("\tfloat4 initial_ocol0 = float4(0.0);\n");
+      }
+      out.Write("\tfloat4 ocol0;\n");
     }
   }
   else  // D3D
@@ -1164,8 +1251,7 @@ ShaderCode GeneratePixelShaderCode(APIType api_type, const ShaderHostConfig& hos
   if (uid_data->Pretest == AlphaTestResult::Undetermined ||
       (uid_data->Pretest == AlphaTestResult::Fail && uid_data->late_ztest))
   {
-    WriteAlphaTest(out, uid_data, api_type, uid_data->per_pixel_depth,
-                   use_dual_source);
+    WriteAlphaTest(out, uid_data, api_type, uid_data->per_pixel_depth, use_dual_source);
   }
 
   if (uid_data->zfreeze)
@@ -1251,6 +1337,9 @@ ShaderCode GeneratePixelShaderCode(APIType api_type, const ShaderHostConfig& hos
   // Write the color and alpha values to the framebuffer
   // If using shader blend, we still use the separate alpha
   WriteColor(out, api_type, uid_data, use_dual_source);
+
+  if (use_shader_logic)
+    WriteLogicOp(out, uid_data);
 
   if (uid_data->bounding_box)
     out.Write("\tUpdateBoundingBox(rawpos.xy);\n");
@@ -1877,26 +1966,49 @@ static void WriteColor(ShaderCode& out, APIType api_type, const pixel_shader_uid
     return;
   }
 
-  if (uid_data->rgba6_format)
-    out.Write("\tocol0.rgb = float3(prev.rgb >> 2) / 63.0;\n");
-  else
-    out.Write("\tocol0.rgb = float3(prev.rgb) / 255.0;\n");
+  // Use dual-source color blending to perform dst alpha in a single pass
+  if (use_dual_source)
+    out.Write("\tocol1 = float4(0.0, 0.0, 0.0, float(prev.a) / 255.0);\n");
 
   // Colors will be blended against the 8-bit alpha from ocol1 and
   // the 6-bit alpha from ocol0 will be written to the framebuffer
-  if (uid_data->useDstAlpha || uid_data->doAlphaPass)
+  if (uid_data->useDstAlpha)
   {
     out.SetConstantsUsed(C_ALPHA, C_ALPHA);
-    out.Write("\tocol0.a = float(" I_ALPHA ".a >> 2) / 63.0;\n");
+    out.Write("\tprev.a = " I_ALPHA ".a;\n");
+  }
 
-    // Use dual-source color blending to perform dst alpha in a single pass
-    if (use_dual_source)
-      out.Write("\tocol1 = float4(0.0, 0.0, 0.0, float(prev.a) / 255.0);\n");
-  }
+  if (uid_data->rgba6_format)
+    out.Write("\tocol0 = float4(prev >> 2) / 63.0;\n");
   else
-  {
-    out.Write("\tocol0.a = float(prev.a >> 2) / 63.0;\n");
-    if (use_dual_source)
-      out.Write("\tocol1 = float4(0.0, 0.0, 0.0, float(prev.a) / 255.0);\n");
-  }
+    out.Write("\tocol0 = float4(prev) / 255.0;\n");
+}
+
+static void WriteLogicOp(ShaderCode& out, const pixel_shader_uid_data* uid_data)
+{
+  static const std::array<const char*, 16> logic_ops{{
+      "\tnew_color = int3(0);\n",                   // CLEAR
+      "\tnew_color = new_color & old_color;\n",     // AND
+      "\tnew_color = new_color & (~old_color);\n",  // AND_REVERSE
+      "\n",                                         // COPY
+      "\tnew_color = (~new_color) & old_color;\n",  // AND_INVERTED
+      "\tnew_color = old_color;\n",                 // NOOP
+      "\tnew_color = new_color ^ old_color;\n",     // XOR
+      "\tnew_color = new_color | old_color;\n",     // OR
+      "\tnew_color = ~(new_color | old_color);\n",  // NOR
+      "\tnew_color = ~(new_color ^ old_color);\n",  // EQUIV
+      "\tnew_color = ~old_color;\n",                // INVERT
+      "\tnew_color = new_color | (~old_color);\n",  // OR_REVERSE
+      "\tnew_color = ~new_color;\n",                // COPY_INVERTED
+      "\tnew_color = (~new_color) | old_color;\n",  // OR_INVERTED
+      "\tnew_color = ~(new_color & old_color);\n",  // NAND
+      "\tnew_color = int3(255);\n",                 // SET
+  }};
+  out.Write("\tint3 old_color = int3(initial_ocol0.rgb * 255.0);\n");
+  out.Write("\tint3 new_color = prev.rgb;\n");
+  out.Write("{}", logic_ops[uid_data->logic_mode]);
+  out.Write("\tocol0.rgb = float3(new_color & 255) / 255.0;\n");
+
+  //
+  out.Write("\treal_ocol0 = ocol0;\n");
 }
